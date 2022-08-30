@@ -1,0 +1,53 @@
+/* Form styles */
+
+.form {
+  display: inline-block;
+  font-size: 15px;
+  background: white;
+  border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  padding: 25px;
+  margin: auto;
+  box-shadow: rgba(50, 50, 93, 0.25) 0 2px 5px -1px, rgba(0, 0, 0, 0.3) 0 1px 3px -1px;
+  -moz-box-shadow: rgba(50, 50, 93, 0.25) 0 2px 5px -1px, rgba(0, 0, 0, 0.3) 0 1px 3px -1px;
+  -webkit-box-shadow: rgba(50, 50, 93, 0.25) 0 2px 5px -1px, rgba(0, 0, 0, 0.3) 0 1px 3px -1px;
+}
+
+@media (max-width: 1000px) {
+  .form {
+    padding: 0;
+    max-width: calc(100% - 30px);
+    box-shadow: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+  }
+}
+
+.formHeading {
+  font-weight: bold;
+  font-size: 20px;
+  text-align: left;
+}
+
+.button {
+  border: 1px solid #004f49;
+  padding: 8px 20px 8px 20px;
+  background: white;
+  color: #004f49;
+  cursor: pointer;
+  margin-top: 15px;
+  font-size: 16px;
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  -moz-box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  transition: all 0.2s ease-in-out;
+  border-radius: 1000px;
+}
+
+.button:hover {
+  background: #004f49;
+  color: #fff;
+}

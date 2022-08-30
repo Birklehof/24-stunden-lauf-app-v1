@@ -1,0 +1,41 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  uuid  String @id @default(uuid())
+  name  String @unique
+  email String @unique
+  role  String @default("guest")
+}
+
+model Group {
+  uuid   String   @id @default(uuid())
+  name   String   @unique
+  Runner Runner[]
+}
+
+model Runner {
+  number    Int     @id @default(autoincrement())
+  firstName String
+  lastName  String
+  group     Group?  @relation(fields: [groupUuid], references: [uuid])
+  groupUuid String?
+  grade     String?
+  laps      Lap[]
+}
+
+model Lap {
+  uuid         String   @id @default(uuid())
+  runner       Runner   @relation(fields: [runnerNumber], references: [number])
+  runnerNumber Int
+  runAt        DateTime @default(now())
+}

@@ -1,0 +1,13 @@
+.main {
+  width: 100%;
+  text-align: center;
+  display: flex;
+  align-items: flex-start;
+  flex-grow: 1;
+}
+
+@media (max-width: 1000px) {
+  .main {
+    margin-top: 50px;
+  }
+}
