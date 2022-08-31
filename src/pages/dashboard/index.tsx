@@ -41,9 +41,11 @@ export default function IndexRunnersPage({ runners }: { runners: RunnerWithGroup
     for (let i = 0; i <= 2; i++) {
       if (!runners[i]) {
         runners[i] = {
-          uuid: `unset-${i}`,
-          name: 'Niemand',
-          runners: []
+          number: i,
+          firstName: 'Niemand',
+          lastName: '',
+          groupUuid: null,
+          grade: ''
         };
       }
     }
