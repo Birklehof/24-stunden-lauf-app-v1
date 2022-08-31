@@ -40,49 +40,55 @@ export default function IndexRunnersPage({ groups }: { groups: GroupWithRunnersW
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== 'undefined' && loading) return null;
 
+  // Make sure groups has a least three elements
+  if (groups.length < 3) {
+    for (let i = 0; i <= 2; i++) {
+      if (!groups[i]) {
+        groups[i] = {
+          uuid: `unset-${i}`,
+          name: 'Niemand',
+          runners: []
+        };
+      }
+    }
+  }
+
   return (
     <Layout>
       <div className={style.leaderboard}>
-
-      </div>
-      {/*<div className={'form table-form'}>
-        <h1 className={'formHeading'}>Gruppen</h1>
-        <div className={'tableWrapper'}>
-          <table className={'ranked'}>
-            <thead>
-            <tr>
-              <th>Name</th>
-              <th>Läufer</th>
-              <th>Runden gesamt</th>
-            </tr>
-            </thead>
-            <tbody>
-            {groups && groups.map(group => (
-              <tr key={group.id}>
-                <td>{group.name}</td>
-                <td>
-                  <details>
-                    <summary>{group.runners.length} Läufer</summary>
-                    {group.runners.map(runner => (
-                      <div key={runner.id}>
-                        {runner.firstName} {runner.lastName} {(
-                          <>
-                            (<small>{runner.laps?.length} Runden</small>)
-                          </>
-                        )}
-                      </div>
-                    ))}
-                  </details>
-                </td>
-                <td>
-                  {group.runners.reduce((acc, runner) => acc + runner.laps?.length || 0, 0)}
-                </td>
-              </tr>
+        <div className={style.topThree}>
+          {groups &&
+            [groups[1], groups[0], groups[2]].map((group: GroupWithRunnersWithLaps) => (
+              <div className={style.item}>
+                <div className={style.name}>{group.name}</div>
+                <div className={style.podium}>
+                  <div className={style.pos}>{groups.indexOf(group) + 1}</div>
+                  <div className={style.laps}>
+                    {group.runners?.reduce((acc, runner) => acc + Number(runner.laps?.length) || 0, 0)}{' '}
+                    {group.runners?.reduce((acc, runner) => acc + Number(runner.laps?.length) || 0, 0) === 1
+                      ? 'Runde'
+                      : 'Runden'}
+                  </div>
+                </div>
+              </div>
             ))}
-            </tbody>
-          </table>
         </div>
-      </div>*/}
+        <div className={style.rest}>
+          {groups &&
+            groups.slice(3).map((group: GroupWithRunnersWithLaps, index: number) => (
+              <div className={style.item}>
+                <div className={style.pos}>{index + 3}</div>
+                <div className={style.name}>{group.name}</div>
+                <div className={style.laps}>
+                  {group.runners?.reduce((acc, runner) => acc + Number(runner.laps?.length) || 0, 0)}{' '}
+                  {group.runners?.reduce((acc, runner) => acc + Number(runner.laps?.length) || 0, 0) === 1
+                    ? 'Runde'
+                    : 'Runden'}
+                </div>
+              </div>
+            ))}
+        </div>
+      </div>
     </Layout>
   );
 }

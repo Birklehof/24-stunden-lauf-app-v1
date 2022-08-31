@@ -6,7 +6,7 @@ import { prisma } from '../../../prisma';
 import { Group, Runner, Lap } from '@prisma/client';
 import { IoTrashOutline } from 'react-icons/io5';
 import { useToasts } from 'react-toast-notifications';
-import style from "../../styles/leaderboard.module.css";
+import style from '../../styles/leaderboard.module.css';
 
 interface RunnerWithGroupAndLaps extends Runner {
   group?: Group;
@@ -36,61 +36,53 @@ export default function IndexRunnersPage({ runners }: { runners: RunnerWithGroup
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== 'undefined' && loading) return null;
 
+  // Make sure runners has a least three elements
+  if (runners.length < 3) {
+    for (let i = 0; i <= 2; i++) {
+      if (!runners[i]) {
+        runners[i] = {
+          uuid: `unset-${i}`,
+          name: 'Niemand',
+          runners: []
+        };
+      }
+    }
+  }
+
   return (
     <Layout>
       <div className={style.leaderboard}>
         <div className={style.topThree}>
-          {runners && [runners[1], runners[0], runners[2]].map((runner: RunnerWithGroupAndLaps) => (
-            <div className={style.item}>
-              <div className={style.name}>{runner.firstName} {runner.lastName} ({runner.number})</div>
-              <div className={style.podium}>
-                <div className={style.pos}>
-                  {runners.indexOf(runner) + 1}
+          {runners &&
+            [runners[1], runners[0], runners[2]].map((runner: RunnerWithGroupAndLaps) => (
+              <div className={style.item}>
+                <div className={style.name}>
+                  {runner.firstName} {runner.lastName} ({runner.number})
                 </div>
-                <div className={style.laps}>{runner.laps?.length} Runden</div>
+                <div className={style.podium}>
+                  <div className={style.pos}>{runners.indexOf(runner) + 1}</div>
+                  <div className={style.laps}>
+                    {runner.laps?.length} {runner.laps?.length === 1 ? 'Runde' : 'Runden'}
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
         <div className={style.rest}>
-          {runners && runners.slice(3).map(runner => (
-            <div>
-              <div>{runner.firstName} {runner.lastName}</div>
-              <div>{runner.laps.length}</div>
-            </div>
-          ))}
+          {runners &&
+            runners.slice(3).map((runner: RunnerWithGroupAndLaps, index: number) => (
+              <div className={style.item}>
+                <div className={style.pos}>{index + 3}</div>
+                <div className={style.name}>
+                  {runner.firstName} {runner.lastName} ({runner.number})
+                </div>
+                <div className={style.laps}>
+                  {runner.laps?.length} {runner.laps?.length === 1 ? 'Runde' : 'Runden'}
+                </div>
+              </div>
+            ))}
         </div>
       </div>
-      {/*<div className={'form table-form'}>
-        <h1 className={'formHeading'}>Läufer</h1>
-        <div className={'tableWrapper'}>
-          <table className={'ranked'}>
-            <thead>
-              <tr>
-                <th>Startnummer</th>
-                <th>Vorname</th>
-                <th>Nachname</th>
-                <th>Klasse</th>
-                <th>Gruppe</th>
-                <th>Runden</th>
-              </tr>
-            </thead>
-            <tbody>
-              {runners &&
-                runners.map((runner) => (
-                  <tr key={runner.number}>
-                    <td>{runner.number}</td>
-                    <td>{runner.firstName}</td>
-                    <td>{runner.lastName}</td>
-                    <td>{runner.grade}</td>
-                    <td>{runner.group?.name}</td>
-                    <td>{runner.laps?.length}</td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-        </div>
-      </div>*/}
     </Layout>
   );
 }
