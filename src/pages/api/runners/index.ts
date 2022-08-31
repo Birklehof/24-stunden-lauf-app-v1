@@ -13,19 +13,26 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 
   if (req.method === 'GET') {
     try {
-      const runners = await prisma.runner.findMany(
-        {
-          include: {
-            group: true,
-            laps: true
-          },
-          orderBy: {
+      let runners = await prisma.runner.findMany({
+        include: {
+          group: true,
+          _count: {
+            select: {
+              laps: true
+            }
+          }
+        },
+        orderBy: [
+          {
             laps: {
               _count: 'desc'
             }
+          },
+          {
+            number: 'desc'
           }
-        }
-      );
+        ]
+      });
       return res.status(200).json({
         data: runners
       });

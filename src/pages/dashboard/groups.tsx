@@ -2,15 +2,20 @@ import React from 'react';
 import { useSession } from 'next-auth/react';
 import Layout from '../../components/layout';
 import { prisma } from '../../../prisma';
-import { Group, Runner, Lap } from '@prisma/client';
+import { Group, Runner } from '@prisma/client';
 import style from '../../styles/leaderboard.module.css';
 
-interface RunnerWithLaps extends Runner {
-  laps?: Lap[];
+interface RunnerWithLapsCount extends Runner {
+  _count: {
+    laps: number;
+  };
 }
 
 interface GroupWithRunnersWithLaps extends Group {
-  runners?: RunnerWithLaps[];
+  runners: RunnerWithLapsCount[];
+  _count: {
+    laps: number;
+  };
 }
 
 export async function getServerSideProps(_context: any) {
@@ -18,12 +23,13 @@ export async function getServerSideProps(_context: any) {
     include: {
       runners: {
         include: {
-          laps: true
+          _count: {
+            select: {
+              laps: true
+            }
+          }
         }
       }
-    },
-    orderBy: {
-      name: 'asc'
     }
   });
   groups = JSON.parse(JSON.stringify(groups));
@@ -33,6 +39,33 @@ export async function getServerSideProps(_context: any) {
 export default function IndexRunnersPage({ groups }: { groups: GroupWithRunnersWithLaps[] }) {
   const { status } = useSession();
   const loading = status === 'loading';
+
+  console.log(groups);
+
+  // sum the laps cout for each runner in each group
+  groups.forEach((group) => {
+    group._count = { laps: group.runners?.reduce((acc, runner) => acc + Number(runner._count.laps) || 0, 0) };
+    return group;
+  });
+
+  // sort groups by laps count, if equal sort by number of runners
+  groups.sort((a, b) => {
+    if (a._count.laps > b._count.laps) {
+      return -1;
+    }
+    if (a._count.laps < b._count.laps) {
+      return 1;
+    }
+    if (a.runners?.length < b.runners?.length) {
+      return -1;
+    }
+    if (a.runners?.length > b.runners?.length) {
+      return 1;
+    }
+    return 0;
+  });
+
+  console.log(groups);
 
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== 'undefined' && loading) return null;
@@ -44,6 +77,9 @@ export default function IndexRunnersPage({ groups }: { groups: GroupWithRunnersW
         groups[i] = {
           uuid: `unset-${i}`,
           name: 'Niemand',
+          _count: {
+            laps: 0
+          },
           runners: []
         };
       }
@@ -57,14 +93,13 @@ export default function IndexRunnersPage({ groups }: { groups: GroupWithRunnersW
           {groups &&
             [groups[1], groups[0], groups[2]].map((group: GroupWithRunnersWithLaps, index: number) => (
               <div key={index} className={style.item}>
-                <div className={style.name}>{group.name}</div>
+                <div className={style.name}>
+                  {group.name} ({group.runners?.length})
+                </div>
                 <div className={style.podium}>
                   <div className={style.pos}>{groups.indexOf(group) + 1}</div>
                   <div className={style.laps}>
-                    {group.runners?.reduce((acc, runner) => acc + Number(runner.laps?.length) || 0, 0)}{' '}
-                    {group.runners?.reduce((acc, runner) => acc + Number(runner.laps?.length) || 0, 0) === 1
-                      ? 'Runde'
-                      : 'Runden'}
+                    {group._count?.laps} {group._count?.laps === 1 ? 'Runde' : 'Runden'}
                   </div>
                 </div>
               </div>
@@ -77,10 +112,7 @@ export default function IndexRunnersPage({ groups }: { groups: GroupWithRunnersW
                 <div className={style.pos}>{index + 3}</div>
                 <div className={style.name}>{group.name}</div>
                 <div className={style.laps}>
-                  {group.runners?.reduce((acc, runner) => acc + Number(runner.laps?.length) || 0, 0)}{' '}
-                  {group.runners?.reduce((acc, runner) => acc + Number(runner.laps?.length) || 0, 0) === 1
-                    ? 'Runde'
-                    : 'Runden'}
+                  {group._count?.laps} {group._count?.laps === 1 ? 'Runde' : 'Runden'}
                 </div>
               </div>
             ))}

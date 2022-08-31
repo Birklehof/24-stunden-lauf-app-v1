@@ -13,7 +13,11 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 
   if (req.method === 'GET') {
     try {
-      const groups = await prisma.group.findMany();
+      const groups = await prisma.group.findMany({
+        orderBy: {
+          name: 'asc'
+        }
+      });
       return res.status(200).json({
         data: groups
       });

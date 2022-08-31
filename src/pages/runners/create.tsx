@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Layout from '../../components/layout';
 import { useSession } from 'next-auth/react';
 import AccessDenied from '../../components/accessDenied';
@@ -6,7 +6,7 @@ import { useToasts } from 'react-toast-notifications';
 import { prisma } from '../../../prisma';
 import style from '../../styles/number.module.css';
 import { Group } from '@prisma/client';
-import Link from "next/link";
+import Link from 'next/link';
 
 export async function getServerSideProps(_context: any) {
   const groups = await prisma.group.findMany();
@@ -35,6 +35,10 @@ export default function CreateRunnerPage({ init_groups }: { init_groups: Group[]
     document.getElementById('firstName')?.focus();
   };
 
+  useEffect(() => {
+    getGroups();
+  }, [session]);
+
   const getGroups = async () => {
     const res = await fetch('/api/groups');
     if (res.status === 200) {
@@ -46,7 +50,7 @@ export default function CreateRunnerPage({ init_groups }: { init_groups: Group[]
         autoDismiss: true
       });
     }
-  }
+  };
 
   const submitData = async (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -165,11 +169,12 @@ export default function CreateRunnerPage({ init_groups }: { init_groups: Group[]
                 value={groupUuid}
               >
                 <option value="">Keine Gruppe</option>
-                {groups && groups.map((group) => (
-                  <option key={group.uuid} value={group.uuid}>
-                    {group.name}
-                  </option>
-                ))}
+                {groups &&
+                  groups.map((group) => (
+                    <option key={group.uuid} value={group.uuid}>
+                      {group.name}
+                    </option>
+                  ))}
                 <option value="new">Neue Gruppe</option>
               </select>
             </label>
@@ -200,9 +205,7 @@ export default function CreateRunnerPage({ init_groups }: { init_groups: Group[]
             </label>
             <input type="submit" value="Hinzufügen" disabled={!firstName || !lastName} />
             <Link href={'runners'}>
-              <a className={'back'}>
-                Abbrechen
-              </a>
+              <a className={'back'}>Abbrechen</a>
             </Link>
           </form>
         </div>

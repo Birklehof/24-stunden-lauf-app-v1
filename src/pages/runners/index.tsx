@@ -7,28 +7,39 @@ import { Group, Runner, Lap } from '@prisma/client';
 import { IoTrashOutline } from 'react-icons/io5';
 import { useToasts } from 'react-toast-notifications';
 
-interface RunnerWithGroupAndLaps extends Runner {
+interface RunnerWithGroupAndLapsCount extends Runner {
   group?: Group;
-  laps?: Lap[];
+  _count: {
+    laps: number;
+  };
 }
 
 export async function getServerSideProps(_context: any) {
   let runners = await prisma.runner.findMany({
     include: {
       group: true,
-      laps: true
-    },
-    orderBy: {
-      laps: {
-        _count: 'desc'
+      _count: {
+        select: {
+          laps: true
+        }
       }
-    }
+    },
+    orderBy: [
+      {
+        laps: {
+          _count: 'desc'
+        }
+      },
+      {
+        number: 'desc'
+      }
+    ]
   });
   runners = JSON.parse(JSON.stringify(runners));
   return { props: { runners } };
 }
 
-export default function IndexRunnerPage({ init_runners }: { init_runners: RunnerWithGroupAndLaps[] }) {
+export default function IndexRunnerPage({ init_runners }: { init_runners: RunnerWithGroupAndLapsCount[] }) {
   const { data: session, status } = useSession();
   const loading = status === 'loading';
   const [runners, setRunners] = useState(init_runners);
@@ -121,7 +132,7 @@ export default function IndexRunnerPage({ init_runners }: { init_runners: Runner
                     <td>{runner.lastName}</td>
                     <td>{runner.grade}</td>
                     <td>{runner.group?.name}</td>
-                    <td>{runner.laps?.length}</td>
+                    <td>{runner._count.laps}</td>
                     <td>
                       <button className={'deleteButton'} onClick={() => handleDelete(runner.number)}>
                         <IoTrashOutline />
