@@ -6,6 +6,7 @@ import { prisma } from '../../../prisma';
 import { User } from '@prisma/client';
 import { IoCreateOutline, IoTrashOutline } from 'react-icons/io5';
 import { useToasts } from 'react-toast-notifications';
+import Link from "next/link";
 
 export async function getServerSideProps(_context: any) {
   const users = await prisma.user.findMany();
@@ -104,9 +105,11 @@ export default function IndexUserPage({ init_users }: { init_users: User[] }) {
                       {user.role === 'superadmin' ? 'Super-Admin' : user.role === 'helper' ? 'Helfer' : user.role}
                     </td>
                     <td>
-                      <a className={'editButton'} href={'users/' + user.uuid}>
-                        <IoCreateOutline />
-                      </a>
+                      <Link href={'users/' + user.uuid}>
+                        <a className={'editButton'}>
+                          <IoCreateOutline />
+                        </a>
+                      </Link>
                     </td>
                     <td>
                       <button className={'deleteButton'} onClick={() => handleDelete(user.uuid)}>

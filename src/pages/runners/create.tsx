@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import Layout from '../../components/layout';
-import Router from 'next/router';
 import { useSession } from 'next-auth/react';
 import AccessDenied from '../../components/accessDenied';
 import { useToasts } from 'react-toast-notifications';
 import { prisma } from '../../../prisma';
 import style from '../../styles/number.module.css';
 import { Group } from '@prisma/client';
+import Link from "next/link";
 
 export async function getServerSideProps(_context: any) {
   const groups = await prisma.group.findMany();
@@ -199,9 +199,11 @@ export default function CreateRunnerPage({ init_groups }: { init_groups: Group[]
               />
             </label>
             <input type="submit" value="Hinzufügen" disabled={!firstName || !lastName} />
-            <a className={'back'} href="#" onClick={() => Router.push('/runners')}>
-              Abbrechen
-            </a>
+            <Link href={'runners'}>
+              <a className={'back'}>
+                Abbrechen
+              </a>
+            </Link>
           </form>
         </div>
       )}

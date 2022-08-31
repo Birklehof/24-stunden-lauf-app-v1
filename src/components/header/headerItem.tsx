@@ -24,7 +24,7 @@ export default function HeaderItem({ href, target = '_self', action, text, icon,
         <Link target={target} href={href}>
           <div className={`${styles.headerLink} ${router.pathname === href ? styles.active : ''}`}>
             {icon}{' '}
-            <a target={target} href={href}>
+            <a>
               {text}
             </a>
           </div>
@@ -39,7 +39,7 @@ export default function HeaderItem({ href, target = '_self', action, text, icon,
               }`}
             >
               {icon}{' '}
-              <a target={target} href={href}>
+              <a>
                 {text}
               </a>
             </div>

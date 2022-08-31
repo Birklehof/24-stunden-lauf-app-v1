@@ -123,9 +123,11 @@ export default function CreateUserPage() {
             </select>
           </label>
           <input type="submit" value="Hinzufügen" disabled={!name || !email || !role} />
-          <a className={'back'} href="#" onClick={() => Router.push('/users')}>
-            Abbrechen
-          </a>
+          <Link href={'/users'}>
+            <a className={'back'}>
+              Abbrechen
+            </a>
+          </Link>
         </form>
       </div>
     </Layout>

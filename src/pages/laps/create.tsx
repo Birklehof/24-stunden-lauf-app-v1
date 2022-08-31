@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import Layout from '../../components/layout';
-import Router from 'next/router';
 import { useSession } from 'next-auth/react';
 import AccessDenied from '../../components/accessDenied';
 import { useToasts } from 'react-toast-notifications';
 import style from '../../styles/number.module.css';
+import Link from "next/link";
 
 export default function CreateSalePage() {
   const { data: session, status } = useSession();
@@ -93,9 +93,11 @@ export default function CreateSalePage() {
             }}
           />
           <input type="submit" value="Runde hinzufügen" />
-          <a className={'back'} href="#" onClick={() => Router.push('/')}>
-            Abbrechen
-          </a>
+          <Link href={'/'}>
+            <a className={'back'}>
+              Abbrechen
+            </a>
+          </Link>
         </form>
       </div>
     </Layout>
