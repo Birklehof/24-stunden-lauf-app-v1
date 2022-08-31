@@ -6,6 +6,7 @@ import { prisma } from '../../../prisma';
 import { Group, Runner, Lap } from '@prisma/client';
 import { IoTrashOutline } from 'react-icons/io5';
 import { useToasts } from 'react-toast-notifications';
+import style from "../../styles/leaderboard.module.css";
 
 interface RunnerWithGroupAndLaps extends Runner {
   group?: Group;
@@ -28,70 +29,42 @@ export async function getServerSideProps(_context: any) {
   return { props: { runners } };
 }
 
-export default function IndexSalesPage({ init_runners }: { init_runners: RunnerWithGroupAndLaps[] }) {
-  const { data: session, status } = useSession();
+export default function IndexRunnersPage({ runners }: { runners: RunnerWithGroupAndLaps[] }) {
+  const { status } = useSession();
   const loading = status === 'loading';
-  const [runners, setRunners] = useState(init_runners);
-  const { addToast } = useToasts();
-
-  // Fetch users from protected route
-  useEffect(() => {
-    const fetchData = async () => {
-      const res = await fetch('/api/runners');
-      if (res.status === 200) {
-        const json = await res.json();
-        setRunners(json.data);
-      } else {
-        addToast('Ein Fehler ist aufgeregteren', {
-          appearance: 'error',
-          autoDismiss: true
-        });
-      }
-    };
-    fetchData();
-  }, [addToast, session]);
-
-  const handleDelete = async (number: number) => {
-    const res = await fetch(`/api/runners/${number}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    if (res.status === 200) {
-      const newContent = runners.filter((runner) => runner.number !== number);
-      setRunners(newContent);
-      addToast('Läufer erfolgreich gelöscht', {
-        appearance: 'success',
-        autoDismiss: true
-      });
-    } else if (res.status === 403) {
-      addToast('Fehlende Berechtigung', {
-        appearance: 'error',
-        autoDismiss: true
-      });
-    } else if (res.status === 404) {
-      addToast('Läufer nicht gefunden', {
-        appearance: 'error',
-        autoDismiss: true
-      });
-    } else {
-      addToast('Ein Fehler ist aufgeregteren', {
-        appearance: 'error',
-        autoDismiss: true
-      });
-    }
-  };
 
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== 'undefined' && loading) return null;
 
   return (
     <Layout>
-      <div className={'form table-form'}>
+      <div className={style.leaderboard}>
+        <div className={style.topThree}>
+          {runners && [runners[1], runners[0], runners[2]].map((runner: RunnerWithGroupAndLaps) => (
+            <div className={style.item}>
+              <div className={style.name}>{runner.firstName} {runner.lastName} ({runner.number})</div>
+              <div className={style.podium}>
+                <div className={style.pos}>
+                  {runners.indexOf(runner) + 1}
+                </div>
+                <div className={style.laps}>{runner.laps?.length} Runden</div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className={style.rest}>
+          {runners && runners.slice(3).map(runner => (
+            <div>
+              <div>{runner.firstName} {runner.lastName}</div>
+              <div>{runner.laps.length}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+      {/*<div className={'form table-form'}>
         <h1 className={'formHeading'}>Läufer</h1>
         <div className={'tableWrapper'}>
-          <table>
+          <table className={'ranked'}>
             <thead>
               <tr>
                 <th>Startnummer</th>
@@ -100,7 +73,6 @@ export default function IndexSalesPage({ init_runners }: { init_runners: RunnerW
                 <th>Klasse</th>
                 <th>Gruppe</th>
                 <th>Runden</th>
-                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -113,17 +85,12 @@ export default function IndexSalesPage({ init_runners }: { init_runners: RunnerW
                     <td>{runner.grade}</td>
                     <td>{runner.group?.name}</td>
                     <td>{runner.laps?.length}</td>
-                    <td>
-                      <button className={'deleteButton'} onClick={() => handleDelete(runner.number)}>
-                        <IoTrashOutline />
-                      </button>
-                    </td>
                   </tr>
                 ))}
             </tbody>
           </table>
         </div>
-      </div>
+      </div>*/}
     </Layout>
   );
 }

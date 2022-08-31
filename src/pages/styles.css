@@ -75,12 +75,25 @@ table tbody {
   overflow-y: scroll;
 }
 
+
 table tbody tr:nth-of-type(even) {
   background-color: #fbfbfb;
 }
 
 table tbody tr:nth-of-type(odd) {
   background-color: #f6f6f6;
+}
+
+table.ranked tbody tr:first-child {
+  background-color: #d7b446;
+}
+
+table.ranked tbody tr:nth-child(2) {
+  background-color: #e1e0e0;
+}
+
+table.ranked tbody tr:nth-child(3) {
+  background-color: #e0ac78;
 }
 
 table tbody tr.active-row {

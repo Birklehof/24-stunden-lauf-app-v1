@@ -9,7 +9,7 @@ import {
   IoMenuOutline,
   IoLinkOutline,
   IoLogOutOutline,
-  IoStopwatchOutline
+  IoStopwatchOutline, IoTrophyOutline, IoPeopleOutline, IoLogInOutline
 } from 'react-icons/io5';
 import styles from './header.module.css';
 import { useToasts } from 'react-toast-notifications';
@@ -37,7 +37,7 @@ export default function Header() {
     fetchRole();
   }, [addToast, session]);
 
-  const handleSignOut = async (e: any) => {
+  const handleSignOut = async (_e:any) => {
     await signOut();
     document.location.href = '/';
   };
@@ -47,6 +47,10 @@ export default function Header() {
       <HeaderItem href={'https://www.birklehof.de/'} target={'_blank'} text={'Birklehof'} icon={<IoLinkOutline />} />
       {router.pathname !== '/auth/signin' && (
         <>
+          <HeaderItem text={'Dashboard'} href={'/dashboard'} icon={<IoChevronDownOutline />}>
+            <HeaderItem href={'/dashboard'} text={'Läufer'} icon={<IoTrophyOutline />} />
+            <HeaderItem href={'/dashboard/groups'} text={'Gruppen'} icon={<IoPeopleOutline />} />
+          </HeaderItem>
           {(role === 'helper' || role == 'superadmin') && (
             <HeaderItem href={'/laps/create'} text={'Runden zählen'} icon={<IoStopwatchOutline />} />
           )}
@@ -63,6 +67,7 @@ export default function Header() {
             </HeaderItem>
           )}
           {session && <HeaderItem text={'Abmelden'} action={handleSignOut} icon={<IoLogOutOutline />} />}
+          {!session && <HeaderItem href={'/auth/signin'} text={'Anmelden'} icon={<IoLogInOutline />} />}
         </>
       )}
     </>

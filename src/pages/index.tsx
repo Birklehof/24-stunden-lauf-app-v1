@@ -21,16 +21,13 @@ export default function IndexPage() {
           });
           await Router.push('/laps/create');
         } else if (role === 'superadmin') {
-          addToast('Willkommen zurück' + (session?.user?.name ? ' ' + session?.user?.name : '') + '!', {
+            addToast('Willkommen zurück' + (session?.user?.name ? ' ' + session?.user?.name : '') + '!', {
             appearance: 'info',
             autoDismiss: true
           });
           await Router.push('/users');
         } else {
-          addToast('Deine E-Mail ist für diese Applikation nicht freigegeben', {
-            appearance: 'error',
-            autoDismiss: true
-          });
+          await Router.push('/dashboard');
         }
       } else {
         addToast('Fehler bei der Authentifizierung', {
@@ -43,7 +40,7 @@ export default function IndexPage() {
     if (session) {
       redirect();
     } else {
-      Router.push('/auth/signin');
+      Router.push('/dashboard');
     }
   }, [session]);
 

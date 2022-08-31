@@ -13,9 +13,10 @@ export async function getServerSideProps(_context: any) {
   return { props: { groups } };
 }
 
-export default function CreateRunnerPage({ groups }: { groups: Group[] }) {
+export default function CreateRunnerPage({ init_groups }: { init_groups: Group[] }) {
   const { data: session, status } = useSession();
   const loading = status === 'loading';
+  const [groups, setGroups] = useState(init_groups);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [groupUuid, setGroupUuid] = useState('');
@@ -34,6 +35,19 @@ export default function CreateRunnerPage({ groups }: { groups: Group[] }) {
     document.getElementById('firstName')?.focus();
   };
 
+  const getGroups = async () => {
+    const res = await fetch('/api/groups');
+    if (res.status === 200) {
+      const json = await res.json();
+      setGroups(json.data);
+    } else {
+      addToast('Ein Fehler ist aufgeregteren', {
+        appearance: 'error',
+        autoDismiss: true
+      });
+    }
+  }
+
   const submitData = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     try {
@@ -49,13 +63,13 @@ export default function CreateRunnerPage({ groups }: { groups: Group[] }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
       });
-
       if (res.status === 200) {
         const json = await res.json();
         addToast('Läufer erfolgreich erstellt', {
           appearance: 'success',
           autoDismiss: true
         });
+        await getGroups();
         setNewNumber(json.number);
       } else if (res.status === 400) {
         const json = await res.json();
@@ -151,7 +165,7 @@ export default function CreateRunnerPage({ groups }: { groups: Group[] }) {
                 value={groupUuid}
               >
                 <option value="">Keine Gruppe</option>
-                {groups.map((group) => (
+                {groups && groups.map((group) => (
                   <option key={group.uuid} value={group.uuid}>
                     {group.name}
                   </option>

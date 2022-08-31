@@ -20,7 +20,7 @@ model User {
 model Group {
   uuid   String   @id @default(uuid())
   name   String   @unique
-  Runner Runner[]
+  runners Runner[]
 }
 
 model Runner {

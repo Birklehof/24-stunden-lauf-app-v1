@@ -1,8 +1,9 @@
 import Layout from '../../components/layout';
 import styles from '../../styles/signin.module.css';
 import { getProviders, signIn, useSession } from 'next-auth/react';
-import { IoLogoGoogle, IoLogoApple, IoLogoGithub } from 'react-icons/io5';
+import {IoLogoGoogle, IoLogoApple, IoLogoGithub, IoArrowRedoOutline} from 'react-icons/io5';
 import { Provider } from 'next-auth/providers';
+import Link from "next/link";
 
 // Overwrites the default signing-page by next-auth
 export default function SignIn({ providers }: { providers: Provider[] }) {
@@ -28,6 +29,12 @@ export default function SignIn({ providers }: { providers: Provider[] }) {
               </button>
             </div>
           ))}
+        <hr className={styles.hrOr} />
+        <Link href={'/dashboard'}>
+          <button className={styles.button}>
+            <IoArrowRedoOutline /> Weiter ohne Anmeldung
+          </button>
+        </Link>
       </div>
     </Layout>
   );
