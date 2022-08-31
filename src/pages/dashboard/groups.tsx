@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useSession } from 'next-auth/react';
 import Layout from '../../components/layout';
-import AccessDenied from '../../components/accessDenied';
 import { prisma } from '../../../prisma';
 import { Group, Runner, Lap } from '@prisma/client';
-import { IoTrashOutline } from 'react-icons/io5';
-import { useToasts } from 'react-toast-notifications';
 import style from '../../styles/leaderboard.module.css';
 
 interface RunnerWithLaps extends Runner {
@@ -58,8 +55,8 @@ export default function IndexRunnersPage({ groups }: { groups: GroupWithRunnersW
       <div className={style.leaderboard}>
         <div className={style.topThree}>
           {groups &&
-            [groups[1], groups[0], groups[2]].map((group: GroupWithRunnersWithLaps) => (
-              <div className={style.item}>
+            [groups[1], groups[0], groups[2]].map((group: GroupWithRunnersWithLaps, index: number) => (
+              <div key={index} className={style.item}>
                 <div className={style.name}>{group.name}</div>
                 <div className={style.podium}>
                   <div className={style.pos}>{groups.indexOf(group) + 1}</div>
@@ -76,7 +73,7 @@ export default function IndexRunnersPage({ groups }: { groups: GroupWithRunnersW
         <div className={style.rest}>
           {groups &&
             groups.slice(3).map((group: GroupWithRunnersWithLaps, index: number) => (
-              <div className={style.item}>
+              <div key={index} className={style.item}>
                 <div className={style.pos}>{index + 3}</div>
                 <div className={style.name}>{group.name}</div>
                 <div className={style.laps}>

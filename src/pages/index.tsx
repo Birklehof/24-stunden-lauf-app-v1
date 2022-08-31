@@ -21,7 +21,7 @@ export default function IndexPage() {
           });
           await Router.push('/laps/create');
         } else if (role === 'superadmin') {
-            addToast('Willkommen zurück' + (session?.user?.name ? ' ' + session?.user?.name : '') + '!', {
+          addToast('Willkommen zurück' + (session?.user?.name ? ' ' + session?.user?.name : '') + '!', {
             appearance: 'info',
             autoDismiss: true
           });
@@ -42,7 +42,7 @@ export default function IndexPage() {
     } else {
       Router.push('/dashboard');
     }
-  }, [session]);
+  }, [addToast, session]);
 
   return (
     <Layout>

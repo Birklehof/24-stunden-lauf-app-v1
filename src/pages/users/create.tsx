@@ -4,6 +4,7 @@ import Router from 'next/router';
 import { useSession } from 'next-auth/react';
 import AccessDenied from '../../components/accessDenied';
 import { useToasts } from 'react-toast-notifications';
+import Link from 'next/link';
 
 export default function CreateUserPage() {
   const { data: session, status } = useSession();
@@ -124,9 +125,7 @@ export default function CreateUserPage() {
           </label>
           <input type="submit" value="Hinzufügen" disabled={!name || !email || !role} />
           <Link href={'/users'}>
-            <a className={'back'}>
-              Abbrechen
-            </a>
+            <a className={'back'}>Abbrechen</a>
           </Link>
         </form>
       </div>
