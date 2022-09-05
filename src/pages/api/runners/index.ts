@@ -22,16 +22,9 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
             }
           }
         },
-        orderBy: [
-          {
-            laps: {
-              _count: 'desc'
-            }
-          },
-          {
-            number: 'desc'
-          }
-        ]
+        orderBy: {
+          number: 'asc'
+        }
       });
       return res.status(200).json({
         data: runners

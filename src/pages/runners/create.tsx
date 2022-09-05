@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 import AccessDenied from '../../components/accessDenied';
 import { useToasts } from 'react-toast-notifications';
 import { prisma } from '../../../prisma';
-import style from '../../styles/number.module.css';
+import style from '../../styles/laps-number.module.css';
 import { Group } from '@prisma/client';
 import Link from 'next/link';
 
@@ -123,48 +123,52 @@ export default function CreateRunnerPage({ init_groups }: { init_groups: Group[]
   return (
     <Layout>
       {newNumber ? (
-        <div className={'form'}>
-          <p>Der Läufer bekommt die Startnummer</p>
-          <h1 className={style.newNumber}>{newNumber}</h1>
-          <input type="button" value="Okay" onClick={resetForm} />
+        <div className="card w-96 bg-base-100 shadow-xl">
+          <div className="card-body">
+            <h2 className="card-title">Der Läufer bekommt die Startnummer</h2>
+            <h1 className="w-full text-center text-8xl my-3">{newNumber}</h1>
+            <div className="card-actions justify-end">
+              <button className="btn btn-primary" onClick={resetForm}>
+                Okay
+              </button>
+            </div>
+          </div>
         </div>
       ) : (
-        <div className={'form'}>
-          <h1 className={'formHeading'}>Läufer hinzufügen</h1>
-          <form onSubmit={submitData}>
-            <label htmlFor={'firstName'}>
-              <span>
-                Vorname <span className={'required'}>*</span>
-              </span>
+        <div className="card w-11/12 max-w-sm bg-base-100 shadow-xl">
+          <div className="card-body">
+            <h2 className="card-title">Läufer hinzufügen</h2>
+            <form onSubmit={submitData}>
+              <label className="label">
+                <span className="label-text">Vorname*</span>
+              </label>
               <input
-                id={'firstName'}
                 name={'firstName'}
-                className={'input-field'}
+                className="input input-bordered w-full max-w-xs"
                 autoFocus
                 onChange={(e) => setFirstName(e.target.value)}
                 type={'text'}
                 value={firstName}
                 required
               />
-            </label>
-            <label htmlFor={'lastName'}>
-              <span>
-                Nachname <span className={'required'}>*</span>
-              </span>
+              <label className="label">
+                <span className="label-text">Nachname*</span>
+              </label>
               <input
                 name={'lastName'}
-                className={'input-field'}
+                className="input input-bordered w-full max-w-xs"
+                autoFocus
                 onChange={(e) => setLastName(e.target.value)}
                 type={'text'}
                 value={lastName}
                 required
               />
-            </label>
-            <label htmlFor={'groupUuid'}>
-              <span>Gruppe</span>
+              <label className="label">
+                <span className="label-text">Gruppe</span>
+              </label>
               <select
                 name={'groupUuid'}
-                className={'select-field'}
+                className="select select-bordered w-full max-w-xs"
                 onChange={(e) => setGroupUuid(e.target.value)}
                 value={groupUuid}
               >
@@ -177,37 +181,46 @@ export default function CreateRunnerPage({ init_groups }: { init_groups: Group[]
                   ))}
                 <option value="new">Neue Gruppe</option>
               </select>
-            </label>
-            {groupUuid === 'new' && (
-              <label htmlFor={'newGroupName'}>
-                <span>
-                  Gruppenname <span className={'required'}>*</span>
-                </span>
-                <input
-                  name={'newGroupName'}
-                  className={'input-field'}
-                  onChange={(e) => setNewGroupName(e.target.value)}
-                  type={'text'}
-                  value={newGroupName}
-                  required
-                />
+              {groupUuid === 'new' && (
+                <>
+                  <label className="label">
+                    <span className="label-text">Gruppenname</span>
+                  </label>
+                  <input
+                    name={'newGroupName'}
+                    className="input input-bordered w-full max-w-xs"
+                    onChange={(e) => setNewGroupName(e.target.value)}
+                    type={'text'}
+                    value={newGroupName}
+                    required
+                  />
+                </>
+              )}
+              <label className="label">
+                <span className="label-text">Klasse</span>
               </label>
-            )}
-            <label htmlFor={'grade'}>
-              <span>Klasse</span>
               <input
                 name={'grade'}
-                className={'input-field'}
+                className="input input-bordered w-full max-w-xs"
                 onChange={(e) => setGrade(e.target.value)}
                 type={'text'}
                 value={grade}
               />
-            </label>
-            <input type="submit" value="Hinzufügen" disabled={!firstName || !lastName} />
-            <Link href={'runners'}>
-              <a className={'back'}>Abbrechen</a>
-            </Link>
-          </form>
+              <div className="mt-4">
+                <div className="flex gap-y-2 w-full justify-evenly flex-col sm:flex-row">
+                  <input
+                    className="btn btn-primary"
+                    type={'submit'}
+                    value={'Hinzufügen'}
+                    disabled={!firstName || !lastName || (groupUuid === 'new' && !newGroupName)}
+                  />
+                  <Link href={'/users'}>
+                    <a className={'btn btn-outline btn-error'}>Abbrechen</a>
+                  </Link>
+                </div>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </Layout>

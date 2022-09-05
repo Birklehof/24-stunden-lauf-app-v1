@@ -24,16 +24,9 @@ export async function getServerSideProps(_context: any) {
         }
       }
     },
-    orderBy: [
-      {
-        laps: {
-          _count: 'desc'
-        }
-      },
-      {
-        number: 'desc'
-      }
-    ]
+    orderBy: {
+      number: 'asc'
+    }
   });
   runners = JSON.parse(JSON.stringify(runners));
   return { props: { runners } };
@@ -108,40 +101,42 @@ export default function IndexRunnerPage({ init_runners }: { init_runners: Runner
 
   return (
     <Layout>
-      <div className={'form table-form'}>
-        <h1 className={'formHeading'}>Läufer</h1>
-        <div className={'tableWrapper'}>
-          <table>
-            <thead>
-              <tr>
-                <th>Startnummer</th>
-                <th>Vorname</th>
-                <th>Nachname</th>
-                <th>Klasse</th>
-                <th>Gruppe</th>
-                <th>Runden</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {runners &&
-                runners.map((runner) => (
-                  <tr key={runner.number}>
-                    <td>{runner.number}</td>
-                    <td>{runner.firstName}</td>
-                    <td>{runner.lastName}</td>
-                    <td>{runner.grade}</td>
-                    <td>{runner.group?.name}</td>
-                    <td>{runner._count.laps}</td>
-                    <td>
-                      <button className={'deleteButton'} onClick={() => handleDelete(runner.number)}>
-                        <IoTrashOutline />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
+      <div className="card w-2/3 h-full bg-base-100 shadow-xl">
+        <div className="card-body">
+          <h2 className="card-title">Läufer</h2>
+          <div className="overflow-x-auto">
+            <table className="table table-compact w-full">
+              <thead>
+                <tr>
+                  <th>Startnummer</th>
+                  <th>Vorname</th>
+                  <th>Nachname</th>
+                  <th>Klasse</th>
+                  <th>Gruppe</th>
+                  <th>Runden</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {runners &&
+                  runners.map((runner) => (
+                    <tr key={runner.number}>
+                      <th>{runner.number}</th>
+                      <td>{runner.firstName}</td>
+                      <td>{runner.lastName}</td>
+                      <td>{runner.grade}</td>
+                      <td>{runner.group?.name}</td>
+                      <td>{runner._count.laps}</td>
+                      <td>
+                        <button className={'deleteButton'} onClick={() => handleDelete(runner.number)}>
+                          <IoTrashOutline />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </Layout>

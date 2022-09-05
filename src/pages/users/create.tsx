@@ -77,57 +77,61 @@ export default function CreateUserPage() {
 
   return (
     <Layout>
-      <div className={'form'}>
-        <h1 className={'formHeading'}>Benutzer hinzufügen</h1>
-        <form onSubmit={submitData}>
-          <label htmlFor="name">
-            <span>
-              Name <span className="required">*</span>
-            </span>
+      <div className="card w-11/12 max-w-sm bg-base-100 shadow-xl">
+        <div className="card-body">
+          <h2 className="card-title">Benutzer hinzufügen</h2>
+          <form onSubmit={submitData}>
+            <label className="label">
+              <span className="label-text">Name*</span>
+            </label>
             <input
               name={'name'}
-              className={'input-field'}
+              className="input input-bordered w-full max-w-xs"
               autoFocus
               onChange={(e) => setName(e.target.value)}
-              type="text"
+              type={'text'}
               value={name}
               required
             />
-          </label>
-          <label htmlFor="email">
-            <span>
-              E-Mail <span className="required">*</span>
-            </span>
+            <label className="label">
+              <span className="label-text">E-Mail*</span>
+            </label>
             <input
               name={'email'}
-              className={'input-field'}
+              className="input input-bordered w-full max-w-xs"
               onChange={(e) => setEmail(e.target.value)}
-              placeholder=""
-              type="text"
+              type={'text'}
               value={email}
               required
             />
-          </label>
-          <label htmlFor="role">
-            <span>
-              Rolle <span className="required">*</span>
-            </span>
+            <label className="label">
+              <span className="label-text">Rolle *</span>
+            </label>
             <select
               name={'role'}
-              className="select-field"
+              className="select select-bordered w-full max-w-xs"
               onChange={(e) => setRole(e.target.value)}
               value={role}
               required
             >
-              <option value="superadmin">Super-Admin</option>
-              <option value="helper">Helfer</option>
+              <option value={'superadmin'}>Super-Admin</option>
+              <option value={'helper'}>Helfer</option>
             </select>
-          </label>
-          <input type="submit" value="Hinzufügen" disabled={!name || !email || !role} />
-          <Link href={'/users'}>
-            <a className={'back'}>Abbrechen</a>
-          </Link>
-        </form>
+            <div className="mt-4">
+              <div className="flex gap-y-2 w-full justify-evenly flex-col sm:flex-row">
+                <input
+                  className="btn btn-primary"
+                  type={'submit'}
+                  value={'Hinzufügen'}
+                  disabled={!name || !email || !role}
+                />
+                <Link href={'/users'}>
+                  <a className={'btn btn-outline btn-error'}>Abbrechen</a>
+                </Link>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
     </Layout>
   );

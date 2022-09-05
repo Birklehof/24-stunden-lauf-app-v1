@@ -1,7 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;400;500;700;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;600;700&display=swap');
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
 
-/* General styles */
+/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;400;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;600;700&display=swap'); */
+
+/* General styles
 
 body {
   margin: 0;
@@ -29,14 +33,14 @@ a {
   margin: 0;
 }
 
-/* Selection style */
+/* Selection style
 ::selection,
 ::-moz-selection {
   background: rgba(0, 79, 73, 0.8);
   color: #fff;
 }
 
-/* Table styles */
+/* Table styles
 .tableWrapper {
   width: 100%;
   height: 100%;
@@ -74,7 +78,6 @@ table tbody {
   height: 2rem;
   overflow-y: scroll;
 }
-
 
 table tbody tr:nth-of-type(even) {
   background-color: #fbfbfb;
@@ -117,7 +120,7 @@ table tbody tr.active-row {
   font-size: 1rem;
 }
 
-/* Form styles */
+/* Form styles
 
 .form {
   display: inline-block;
@@ -354,7 +357,7 @@ table tbody tr.active-row {
   background: #004f49;
   color: #fff;
 }
-/* style for disabled buttons */
+/* style for disabled buttons
 .form input[type='submit']:disabled,
 .form input[type='button']:disabled {
   border: 1px solid #91b9b1;
@@ -373,4 +376,4 @@ table tbody tr.active-row {
   margin-top: 5px;
   padding: 8px 15px 8px 15px;
   color: #004f49;
-}
+} */

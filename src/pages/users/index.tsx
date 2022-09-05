@@ -6,7 +6,7 @@ import { prisma } from '../../../prisma';
 import { User } from '@prisma/client';
 import { IoCreateOutline, IoTrashOutline } from 'react-icons/io5';
 import { useToasts } from 'react-toast-notifications';
-import Link from "next/link";
+import Link from 'next/link';
 
 export async function getServerSideProps(_context: any) {
   const users = await prisma.user.findMany();
@@ -82,44 +82,48 @@ export default function IndexUserPage({ init_users }: { init_users: User[] }) {
 
   return (
     <Layout>
-      <div className={'form table-form'}>
-        <h1 className={'formHeading'}>Benutzer</h1>
-        <div className={'tableWrapper'}>
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>E-Mail</th>
-                <th>Rolle</th>
-                <th></th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {users &&
-                users.map((user) => (
-                  <tr key={user.uuid}>
-                    <td>{user.name}</td>
-                    <td>{user.email}</td>
-                    <td>
-                      {user.role === 'superadmin' ? 'Super-Admin' : user.role === 'helper' ? 'Helfer' : user.role}
-                    </td>
-                    <td>
-                      <Link href={'users/' + user.uuid}>
-                        <a className={'editButton'}>
-                          <IoCreateOutline />
-                        </a>
-                      </Link>
-                    </td>
-                    <td>
-                      <button className={'deleteButton'} onClick={() => handleDelete(user.uuid)}>
-                        <IoTrashOutline />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
+      <div className="card w-11/12 max-w-4xl h-full bg-base-100 shadow-xl">
+        <div className="card-body">
+          <h2 className="card-title">Benutzer</h2>
+          <div className="overflow-x-auto">
+            <table className="table table-compact w-full">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Name</th>
+                  <th>E-Mail</th>
+                  <th>Rolle</th>
+                  <th></th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {users &&
+                  users.map((user, index) => (
+                    <tr key={user.uuid}>
+                      <th>{index + 1}</th>
+                      <td>{user.name}</td>
+                      <td>{user.email}</td>
+                      <td>
+                        {user.role === 'superadmin' ? 'Super-Admin' : user.role === 'helper' ? 'Helfer' : user.role}
+                      </td>
+                      <td>
+                        <Link href={'users/' + user.uuid}>
+                          <a className={'editButton'}>
+                            <IoCreateOutline />
+                          </a>
+                        </Link>
+                      </td>
+                      <td>
+                        <button className={'deleteButton'} onClick={() => handleDelete(user.uuid)}>
+                          <IoTrashOutline />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </Layout>

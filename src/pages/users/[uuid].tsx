@@ -4,7 +4,7 @@ import Router, { useRouter } from 'next/router';
 import AccessDenied from '../../components/accessDenied';
 import { useSession } from 'next-auth/react';
 import { useToasts } from 'react-toast-notifications';
-import Link from "next/link";
+import Link from 'next/link';
 
 export default function UpdateUserPage() {
   const { data: session, status } = useSession();
@@ -110,78 +110,63 @@ export default function UpdateUserPage() {
 
   return (
     <Layout>
-      {JSON.stringify(typeof window)}
-      {JSON.stringify(loading)}
-      <div className={'form'}>
-        <h1 className={'formHeading'}>Benutzer bearbeiten</h1>
-        <form onSubmit={submitData}>
-          <label htmlFor="name">
-            <span>
-              Name <span className="required">*</span>
-            </span>
+      <div className="card w-11/12 max-w-sm bg-base-100 shadow-xl">
+        <div className="card-body">
+          <h2 className="card-title">Benutzer bearbeiten</h2>
+          <form onSubmit={submitData}>
+            <label className="label">
+              <span className="label-text">Name*</span>
+            </label>
             <input
               name={'name'}
-              className={'input-field'}
+              className="input input-bordered w-full max-w-xs"
               autoFocus
               onChange={(e) => setName(e.target.value)}
-              type="text"
-              value={name}
+              type={'text'}
               readOnly={role === 'superadmin'}
+              value={name}
               required
             />
-          </label>
-          <label htmlFor="email">
-            <span>
-              E-Mail <span className="required">*</span>
-            </span>
+            <label className="label">
+              <span className="label-text">E-Mail*</span>
+            </label>
             <input
               name={'email'}
-              className={'input-field'}
+              className="input input-bordered w-full max-w-xs"
               onChange={(e) => setEmail(e.target.value)}
-              placeholder=""
-              type="text"
-              value={email}
+              type={'text'}
               readOnly={role === 'superadmin'}
+              value={email}
               required
             />
-          </label>
-          {role !== 'superadmin' ? (
-            <label htmlFor="role">
-              <span>
-                Rolle <span className="required">*</span>
-              </span>
-              <select
-                name={'role'}
-                className="select-field"
-                onChange={(e) => setRole(e.target.value)}
-                value={role}
-                required
-              >
-                <option value="helper">Helfer</option>
-              </select>
+            <label className="label">
+              <span className="label-text">Rolle *</span>
             </label>
-          ) : null}
-          {role === 'superadmin' ? (
-            <label htmlFor="role">
-              <span>Rolle </span>
-              <input
-                name={'role'}
-                className={'input-field'}
-                onChange={(e) => setRole(e.target.value)}
-                value={'Super-Admin'}
-                type={'text'}
-                required
-                readOnly
-              ></input>
-            </label>
-          ) : null}
-          <input type="submit" value="Speichern" disabled={!name || !email || !role || role === 'superadmin'} />
-          <Link href={'/users'}>
-            <a className={'back'}>
-              Abbrechen
-            </a>
-          </Link>
-        </form>
+            <select
+              name={'role'}
+              className="select select-bordered w-full max-w-xs"
+              onChange={(e) => setRole(e.target.value)}
+              value={role}
+              required
+            >
+              <option value={'superadmin'}>Super-Admin</option>
+              <option value={'helper'}>Helfer</option>
+            </select>
+            <div className="mt-4">
+              <div className="flex gap-y-2 w-full justify-evenly flex-col sm:flex-row">
+                <input
+                  className="btn btn-primary"
+                  type={'submit'}
+                  value={'Speichern'}
+                  disabled={!name || !email || !role}
+                />
+                <Link href={'/users'}>
+                  <a className={'btn btn-outline btn-error'}>Abbrechen</a>
+                </Link>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
     </Layout>
   );

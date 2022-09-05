@@ -3,7 +3,7 @@ import { useSession } from 'next-auth/react';
 import Layout from '../../components/layout';
 import { prisma } from '../../../prisma';
 import { Group, Runner } from '@prisma/client';
-import style from '../../styles/leaderboard.module.css';
+import style from '../../styles/results-scoreboard.module.css';
 
 interface RunnerWithLapsCount extends Runner {
   _count: {
@@ -36,7 +36,7 @@ export async function getServerSideProps(_context: any) {
   return { props: { groups } };
 }
 
-export default function IndexRunnersPage({ groups }: { groups: GroupWithRunnersWithLaps[] }) {
+export default function GroupsPage({ groups }: { groups: GroupWithRunnersWithLaps[] }) {
   const { status } = useSession();
   const loading = status === 'loading';
 

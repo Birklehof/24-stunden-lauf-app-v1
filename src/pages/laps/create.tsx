@@ -3,8 +3,8 @@ import Layout from '../../components/layout';
 import { useSession } from 'next-auth/react';
 import AccessDenied from '../../components/accessDenied';
 import { useToasts } from 'react-toast-notifications';
-import style from '../../styles/number.module.css';
-import Link from "next/link";
+import style from '../../styles/laps-number.module.css';
+import Link from 'next/link';
 
 export default function CreateSalePage() {
   const { data: session, status } = useSession();
@@ -93,10 +93,8 @@ export default function CreateSalePage() {
             }}
           />
           <input type="submit" value="Runde hinzufügen" />
-          <Link href={'/'}>
-            <a className={'back'}>
-              Abbrechen
-            </a>
+          <Link href={'/results'}>
+            <a className={'back'}>Abbrechen</a>
           </Link>
         </form>
       </div>

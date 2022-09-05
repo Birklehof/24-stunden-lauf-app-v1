@@ -1,6 +1,6 @@
 import { SessionProvider } from 'next-auth/react';
 import type { AppProps } from 'next/app';
-import './styles.css';
+import '../styles/global.css';
 import 'react-csv';
 import { ToastProvider } from 'react-toast-notifications';
 import Head from 'next/head';

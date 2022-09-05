@@ -51,7 +51,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
       if (e instanceof PrismaClientKnownRequestError) {
         // The .code property can be accessed in a type-safe manner
         if (e.code === 'P2002') {
-          return res.status(400).json({ message: 'Benutzer existiert bereits' });
+          return res.status(400).json({ error: 'Benutzer existiert bereits' });
         }
       }
       return res.status(500).end();

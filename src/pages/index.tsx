@@ -27,7 +27,7 @@ export default function IndexPage() {
           });
           await Router.push('/users');
         } else {
-          await Router.push('/dashboard');
+          await Router.push('/results');
         }
       } else {
         addToast('Fehler bei der Authentifizierung', {
@@ -40,7 +40,7 @@ export default function IndexPage() {
     if (session) {
       redirect();
     } else {
-      Router.push('/dashboard');
+      Router.push('/results');
     }
   }, [addToast, session]);
 

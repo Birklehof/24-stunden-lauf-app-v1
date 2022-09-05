@@ -3,7 +3,6 @@ import { prisma } from '../../../../prisma';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import middleware from '../middleware';
 import { getToken } from 'next-auth/jwt';
-import { signOut } from 'next-auth/react';
 
 const secret = process.env.NEXTAUTH_SECRET;
 
@@ -32,11 +31,12 @@ async function handleGET(userUuid: string, res: NextApiResponse) {
     const user = await prisma.user.findUnique({
       where: { uuid: userUuid }
     });
+
     if (!user) {
       return res.status(404).end();
-    } else {
-      return res.status(200).json({ data: user });
     }
+
+    return res.status(200).json({ data: user });
   } catch (e) {
     return res.status(500).end();
   }
@@ -48,53 +48,52 @@ async function handlePATCH(userUuid: string, res: NextApiResponse, req: NextApiR
     const user = await prisma.user.findUnique({
       where: { uuid: userUuid }
     });
+
     if (!user) {
       return res.status(404).end();
-    } else if (user.role == 'superadmin') {
-      return res.status(403).end();
-    } else {
-      try {
-        const { name, email, role } = await req.body;
+    }
 
-        if (!name || !email || !role) {
-          return res.status(400).json({
-            error: 'Fehlende Angaben'
-          });
-        } else if (typeof name !== 'string') {
-          return res.status(400).json({
-            error: 'Name muss ein String sein'
-          });
-        } else if (typeof email !== 'string') {
-          return res.status(400).json({
-            error: 'E-Mail muss ein String sein'
-          });
-        } else if (typeof role !== 'string') {
-          return res.status(400).json({
-            error: 'Rolle muss ein String sein'
-          });
-        } else if (role !== 'helper') {
-          return res.status(400).json({
-            error: 'Ungültige Rolle'
-          });
-        }
+    try {
+      const { name, email, role } = await req.body;
 
-        await prisma.user.update({
-          where: { uuid: userUuid },
-          data: {
-            name,
-            email,
-            role
-          }
+      if (!name || !email || !role) {
+        return res.status(400).json({
+          error: 'Fehlende Angaben'
         });
-        return res.status(200).end();
-      } catch (e) {
-        if (e instanceof PrismaClientKnownRequestError) {
-          if (e.code === 'P2002') {
-            res.status(400).json({ message: 'Benutzer existiert bereits' });
-          }
-        }
-        return res.status(500).end();
+      } else if (typeof name !== 'string') {
+        return res.status(400).json({
+          error: 'Name muss ein String sein'
+        });
+      } else if (typeof email !== 'string') {
+        return res.status(400).json({
+          error: 'E-Mail muss ein String sein'
+        });
+      } else if (typeof role !== 'string') {
+        return res.status(400).json({
+          error: 'Rolle muss ein String sein'
+        });
+      } else if (role !== 'helper' && role !== 'superadmin') {
+        return res.status(400).json({
+          error: 'Ungültige Rolle'
+        });
       }
+
+      await prisma.user.update({
+        where: { uuid: userUuid },
+        data: {
+          name,
+          email,
+          role
+        }
+      });
+      return res.status(200).end();
+    } catch (e) {
+      if (e instanceof PrismaClientKnownRequestError) {
+        if (e.code === 'P2002') {
+          res.status(400).json({ message: 'Benutzer existiert bereits' });
+        }
+      }
+      return res.status(500).end();
     }
   } catch (e) {
     return res.status(500).end();
@@ -110,9 +109,8 @@ async function handleDELETE(userUuid: string, res: NextApiResponse) {
 
     if (!user) {
       return res.status(404).end();
-    } else if (user.role === 'superadmin') {
-      return res.status(403).end();
     }
+
     await prisma.user.delete({
       where: { uuid: userUuid }
     });
