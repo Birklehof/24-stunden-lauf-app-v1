@@ -70,7 +70,10 @@ export default function LeaderbordPage({ runners }: { runners: RunnerWithGroupAn
         <div className="w-11/12 max-w-4xl flex flex-col md:flex-row justify-between items-end my-6 gap-2">
           {runners &&
             [runners[1], runners[0], runners[2]].map((runner: RunnerWithGroupAndLapsCount, index: number) => (
-              <div className="w-full stats grow shadow-lg h-44 first:h-36 last:h-32 text-[#d4af37] first:text-[#c0c0c0] last:text-[#bf8970]">
+              <div
+                key={index}
+                className="w-full stats grow shadow-lg h-44 first:h-36 last:h-32 text-[#d4af37] first:text-[#c0c0c0] last:text-[#bf8970]"
+              >
                 <div className="stat place-items-center">
                   <div className="stat-title text-black">
                     {runner.firstName} {runner.lastName} ({runner.number})

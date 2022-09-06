@@ -49,7 +49,7 @@ export default function CreateRunnerPage({ init_groups }: { init_groups: Group[]
 
   useEffect(() => {
     getGroups();
-  }, [addToast, session]);
+  });
 
   const submitData = async (e: React.SyntheticEvent) => {
     e.preventDefault();
