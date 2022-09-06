@@ -35,13 +35,13 @@ export default function Header() {
     <>
       <div className="navbar bg-secondary z-[100]">
         <div className="navbar-start hidden lg:flex">
-          <Link href={'https://www.birklehof.de'} target={'_blank'}>
-            <a className="btn btn-ghost normal-case text-xl">Birklehof</a>
+          <Link href={'/'}>
+            <a className="btn btn-ghost normal-case text-lg">Birklehof 24h Lauf</a>
           </Link>
         </div>
         <div className="navbar-start lg:hidden">
           <div className="dropdown">
-            <label tabIndex={0} className="btn btn-ghost btn-circle">
+            <label tabIndex={0} className="btn btn-outline btn-primary btn-circle">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"
@@ -54,27 +54,29 @@ export default function Header() {
             </label>
             <ul
               tabIndex={0}
-              className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
+              className="menu menu-compact dropdown-content mt-3 p-2 shadow rounded-box w-64 bg-accent gap-y-2"
             >
               <li>
                 <Link href={'/results'}>
-                  <a>Ergebnisse</a>
+                  <a className="btn btn-sm btn-outline btn-primary rounded-full py-0 justify-start">Ergebnisse</a>
                 </Link>
               </li>
               <li>
                 <Link href={'/results/rankingRunners'}>
-                  <a>{' > '} Rangliste Läufer</a>
+                  <a className="btn btn-sm btn-ghost rounded-full py-0 justify-start ml-4">Rangliste Läufer</a>
                 </Link>
               </li>
               <li>
                 <Link href={'/results/rankingGroups'}>
-                  <a>{' > '} Rangliste Gruppen</a>
+                  <a className="btn btn-sm btn-ghost rounded-full py-0 justify-start ml-4">Rangliste Gruppen</a>
                 </Link>
               </li>
               {(role === 'helper' || role == 'superadmin') && (
                 <li>
                   <Link href={'/laps/create'}>
-                    <a>Runden erfassen</a>
+                    <a className="btn btn-sm btn-outline btn-primary rounded-full py-0 justify-start">
+                      Runden erfassen
+                    </a>
                   </Link>
                 </li>
               )}
@@ -82,12 +84,12 @@ export default function Header() {
                 <>
                   <li>
                     <Link href={'/runners'}>
-                      <a>Läufer</a>
+                      <a className="btn btn-sm btn-outline btn-primary rounded-full py-0 justify-start">Läufer</a>
                     </Link>
                   </li>
                   <li>
                     <Link href={'/runners/create'}>
-                      <a>{' > '} Hinzufügen</a>
+                      <a className="btn btn-sm btn-ghost rounded-full py-0 justify-start ml-4">Hinzufügen</a>
                     </Link>
                   </li>
                 </>
@@ -96,12 +98,12 @@ export default function Header() {
                 <>
                   <li>
                     <Link href={'/users'}>
-                      <a>Benutzer</a>
+                      <a className="btn btn-sm btn-outline btn-primary rounded-full py-0 justify-start">Benutzer</a>
                     </Link>
                   </li>
                   <li>
                     <Link href={'/users/create'}>
-                      <a>{' > '} Hinzufügen</a>
+                      <a className="btn btn-sm btn-ghost rounded-full py-0 justify-start ml-4"> Hinzufügen</a>
                     </Link>
                   </li>
                 </>
@@ -112,9 +114,47 @@ export default function Header() {
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal p-0">
             <li tabIndex={0}>
-              <Link href={'/results'}>
-                <a>
-                  Ergebnisse
+              <a role={'button'} className="btn gap-2 btn-sm btn-outline btn-primary mx-2 rounded-full py-0">
+                Ergebnisse
+                <svg
+                  className="fill-current"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" />
+                </svg>
+              </a>
+              <ul className="p-2 bg-accent gap-y-2">
+                <li>
+                  <Link href={'/results'}>
+                    <a className="btn btn-sm btn-outline btn-primary rounded-full py-0">Übersicht</a>
+                  </Link>
+                </li>
+                <li>
+                  <Link href={'/results/rankingRunners'}>
+                    <a className="btn btn-sm btn-outline btn-primary rounded-full py-0">Rangliste Läufer</a>
+                  </Link>
+                </li>
+                <li>
+                  <Link href={'/results/rankingGroups'}>
+                    <a className="btn btn-sm btn-outline btn-primary rounded-full py-0">Rangliste Gruppen</a>
+                  </Link>
+                </li>
+              </ul>
+            </li>
+            {(role === 'helper' || role == 'superadmin') && (
+              <li>
+                <Link href={'/laps/create'}>
+                  <a className="btn btn-sm btn-outline btn-primary mx-2 rounded-full py-0">Runden erfassen</a>
+                </Link>
+              </li>
+            )}
+            {(role == 'helper' || role == 'superadmin') && (
+              <li tabIndex={0}>
+                <a role={'button'} className="btn gap-2 btn-sm btn-outline btn-primary mx-2 rounded-full py-0">
+                  Läufer
                   <svg
                     className="fill-current"
                     xmlns="http://www.w3.org/2000/svg"
@@ -125,57 +165,15 @@ export default function Header() {
                     <path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" />
                   </svg>
                 </a>
-              </Link>
-              <ul className="p-2 bg-accent">
-                <li>
-                  <Link href={'/results'}>
-                    <a>Übersicht</a>
-                  </Link>
-                </li>
-                <li>
-                  <Link href={'/results/rankingRunners'}>
-                    <a>Rangliste Läufer</a>
-                  </Link>
-                </li>
-                <li>
-                  <Link href={'/results/rankingGroups'}>
-                    <a>Rangliste Gruppen</a>
-                  </Link>
-                </li>
-              </ul>
-            </li>
-            {(role === 'helper' || role == 'superadmin') && (
-              <li>
-                <Link href={'/laps/create'}>
-                  <a>Runden erfassen</a>
-                </Link>
-              </li>
-            )}
-            {(role == 'helper' || role == 'superadmin') && (
-              <li tabIndex={0}>
-                <Link href={'/runners'}>
-                  <a>
-                    Läufer
-                    <svg
-                      className="fill-current"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" />
-                    </svg>
-                  </a>
-                </Link>
-                <ul className="p-2 bg-accent">
+                <ul className="p-2 bg-accent gap-y-2">
                   <li>
                     <Link href={'/runners'}>
-                      <a>Einsehen</a>
+                      <a className="btn btn-sm btn-outline btn-primary rounded-full py-0">Einsehen</a>
                     </Link>
                   </li>
                   <li>
                     <Link href={'/runners/create'}>
-                      <a>Hinzufügen</a>
+                      <a className="btn btn-sm btn-outline btn-primary rounded-full py-0">Hinzufügen</a>
                     </Link>
                   </li>
                 </ul>
@@ -183,29 +181,27 @@ export default function Header() {
             )}
             {role == 'superadmin' && (
               <li tabIndex={0}>
-                <Link href={'/users'}>
-                  <a>
-                    Benutzer
-                    <svg
-                      className="fill-current"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" />
-                    </svg>
-                  </a>
-                </Link>
-                <ul className="p-2 bg-accent">
+                <a role={'button'} className="btn gap-2 btn-sm btn-outline btn-primary mx-2 rounded-full py-0">
+                  Benutzer
+                  <svg
+                    className="fill-current"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" />
+                  </svg>
+                </a>
+                <ul className="p-2 bg-accent gap-y-2">
                   <li>
                     <Link href={'/users'}>
-                      <a>Einsehen</a>
+                      <a className="btn btn-sm btn-outline btn-primary rounded-full py-0">Einsehen</a>
                     </Link>
                   </li>
                   <li>
                     <Link href={'/users/create'}>
-                      <a>Hinzufügen</a>
+                      <a className="btn btn-sm btn-outline btn-primary rounded-full py-0">Hinzufügen</a>
                     </Link>
                   </li>
                 </ul>
@@ -215,13 +211,13 @@ export default function Header() {
         </div>
         <div className="navbar-end">
           {session && (
-            <a className="btn btn-ghost normal-case text-xl" onClick={handleSignOut}>
+            <a className="btn btn-ghost normal-case text-lg lg:btn-sm rounded-full lg:py-0" onClick={handleSignOut}>
               Abmelden
             </a>
           )}
           {!session && (
             <Link href={'/auth/signin'} target={'_blank'}>
-              <a className="btn btn-primary normal-case text-xl">Anmelden</a>
+              <a className="btn btn-primary normal-case text-lg lg:btn-sm rounded-full lg:py-0">Anmelden</a>
             </Link>
           )}
         </div>
