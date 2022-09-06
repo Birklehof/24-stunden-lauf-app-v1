@@ -35,21 +35,21 @@ export default function CreateRunnerPage({ init_groups }: { init_groups: Group[]
   };
 
   useEffect(() => {
-    getGroups();
-  }, [session]);
+    const getGroups = async () => {
+      const res = await fetch('/api/groups');
+      if (res.status === 200) {
+        const json = await res.json();
+        setGroups(json.data);
+      } else {
+        addToast('Ein Fehler ist aufgeregteren', {
+          appearance: 'error',
+          autoDismiss: true
+        });
+      }
+    };
 
-  const getGroups = async () => {
-    const res = await fetch('/api/groups');
-    if (res.status === 200) {
-      const json = await res.json();
-      setGroups(json.data);
-    } else {
-      addToast('Ein Fehler ist aufgeregteren', {
-        appearance: 'error',
-        autoDismiss: true
-      });
-    }
-  };
+    getGroups();
+  }, [addToast, session]);
 
   const submitData = async (e: React.SyntheticEvent) => {
     e.preventDefault();
