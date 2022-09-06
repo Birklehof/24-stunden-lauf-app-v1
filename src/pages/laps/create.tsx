@@ -3,7 +3,6 @@ import Layout from '../../components/layout';
 import { useSession } from 'next-auth/react';
 import AccessDenied from '../../components/accessDenied';
 import { useToasts } from 'react-toast-notifications';
-import style from '../../styles/laps-number.module.css';
 import Link from 'next/link';
 
 export default function CreateSalePage() {
@@ -75,28 +74,39 @@ export default function CreateSalePage() {
 
   return (
     <Layout>
-      <div className={'form'}>
-        <h1 className={'formHeading'}>Runden zählen</h1>
-        <form onSubmit={submitData}>
-          <input
-            name={'number'}
-            className={style.inputNumber}
-            autoFocus
-            onChange={(e) => setNumber(+e.target.value)}
-            type={'number'}
-            value={Number(number).toString()}
-            min={0}
-            required
-            onWheel={(e) => {
-              e.preventDefault();
-              setNumber(number + (e.deltaY > 0 ? 1 : -1));
-            }}
-          />
-          <input type="submit" value="Runde hinzufügen" />
-          <Link href={'/results'}>
-            <a className={'back'}>Abbrechen</a>
-          </Link>
-        </form>
+      <div className="card w-11/12 max-w-sm bg-base-100 shadow-xl">
+        <div className="card-body">
+          <h2 className="card-title">Runde erfassen</h2>
+          <form onSubmit={submitData}>
+            <input
+              name={'number'}
+              className="box-border input input-bordered w-full max-w-xs text-center text-6xl p-12 font-['Roboto_Slab'] tracking-widest"
+              autoFocus
+              onChange={(e) => {
+                e.preventDefault();
+                if (!isNaN(+e.target.value)) {
+                  setNumber(+e.target.value);
+                }
+              }}
+              type={'text'}
+              value={Number(number).toString()}
+              min={0}
+              required
+              onWheel={(e) => {
+                e.preventDefault();
+                setNumber(number + (e.deltaY > 0 ? 1 : -1));
+              }}
+            />
+            <div className="mt-4">
+              <div className="flex gap-y-2 w-full justify-evenly flex-col sm:flex-row">
+                <input className="btn btn-primary" type={'submit'} value={'Erfassen'} disabled={number === 0} />
+                <Link href={'/results'}>
+                  <a className={'btn btn-outline btn-error'}>Abbrechen</a>
+                </Link>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
     </Layout>
   );

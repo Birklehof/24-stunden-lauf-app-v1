@@ -2,8 +2,7 @@ import React from 'react';
 import { useSession } from 'next-auth/react';
 import Layout from '../../components/layout';
 import { prisma } from '../../../prisma';
-import { Group, Runner, Lap } from '@prisma/client';
-import style from '../../styles/results-dashboard.module.css';
+import { Group, Runner } from '@prisma/client';
 
 interface RunnerWithGroupAndLapsCount extends Runner {
   group?: Group;
@@ -48,21 +47,24 @@ export default function GeneralPage({ runners }: { runners: RunnerWithGroupAndLa
 
   return (
     <Layout>
-      <div className="card w-96 bg-base-100 shadow-xl">
+      <div className="card w-11/12 max-w-4xl bg-base-100 shadow-xl">
         <div className="card-body">
-          <div className="flex flex-col w-full lg:flex-row">
+          <h2 className="card-title">Übersicht</h2>
+          <div className="flex flex-col w-full lg:flex-row text-center justify-evenly">
             <div>
-              <h1>{runners.length}</h1>
+              <h1 className="text-5xl">{runners.length}</h1>
               <p>Teilnehmer</p>
             </div>
             <div className="divider lg:divider-horizontal" />
             <div>
-              <h1>{runners.reduce((acc, runner) => acc + Number(runner._count.laps) || 0, 0)}</h1>
+              <h1 className="text-5xl">{runners.reduce((acc, runner) => acc + Number(runner._count.laps) || 0, 0)}</h1>
               <p>Runden gesamt</p>
             </div>
             <div className="divider lg:divider-horizontal" />
             <div>
-              <h1>{runners.reduce((acc, runner) => acc + Number(runner._count.laps) || 0, 0) / runners.length}</h1>
+              <h1 className="text-5xl">
+                {Math.round(runners.reduce((acc, runner) => acc + Number(runner._count.laps) || 0, 0) / runners.length)}
+              </h1>
               <p>Runden pro Teilnehmer</p>
             </div>
           </div>

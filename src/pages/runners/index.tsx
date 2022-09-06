@@ -101,7 +101,7 @@ export default function IndexRunnerPage({ init_runners }: { init_runners: Runner
 
   return (
     <Layout>
-      <div className="card w-2/3 h-full bg-base-100 shadow-xl">
+      <div className="card w-11/12 max-w-4xl h-full bg-base-100 shadow-xl">
         <div className="card-body">
           <h2 className="card-title">Läufer</h2>
           <div className="overflow-x-auto">

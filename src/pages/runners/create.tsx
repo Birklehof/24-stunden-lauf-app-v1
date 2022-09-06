@@ -4,7 +4,6 @@ import { useSession } from 'next-auth/react';
 import AccessDenied from '../../components/accessDenied';
 import { useToasts } from 'react-toast-notifications';
 import { prisma } from '../../../prisma';
-import style from '../../styles/laps-number.module.css';
 import { Group } from '@prisma/client';
 import Link from 'next/link';
 
@@ -126,7 +125,7 @@ export default function CreateRunnerPage({ init_groups }: { init_groups: Group[]
         <div className="card w-96 bg-base-100 shadow-xl">
           <div className="card-body">
             <h2 className="card-title">Der Läufer bekommt die Startnummer</h2>
-            <h1 className="w-full text-center text-8xl my-3">{newNumber}</h1>
+            <h1 className="w-full text-center my-4 text-6xl font-['Roboto_Slab'] tracking-widest">{newNumber}</h1>
             <div className="card-actions justify-end">
               <button className="btn btn-primary" onClick={resetForm}>
                 Okay
@@ -157,7 +156,6 @@ export default function CreateRunnerPage({ init_groups }: { init_groups: Group[]
               <input
                 name={'lastName'}
                 className="input input-bordered w-full max-w-xs"
-                autoFocus
                 onChange={(e) => setLastName(e.target.value)}
                 type={'text'}
                 value={lastName}
