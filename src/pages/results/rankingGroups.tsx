@@ -89,29 +89,29 @@ export default function GroupsPage({ groups }: { groups: GroupWithRunnersWithLap
   return (
     <Layout>
       <div className={style.leaderboard}>
-        <div className={style.topThree}>
+        <div className="w-11/12 max-w-4xl flex flex-col md:flex-row justify-between items-end my-6 gap-2">
           {groups &&
             [groups[1], groups[0], groups[2]].map((group: GroupWithRunnersWithLaps, index: number) => (
-              <div key={index} className={style.item}>
-                <div className={style.name}>
-                  {group.name} ({group.runners?.length})
-                </div>
-                <div className={style.podium}>
-                  <div className={style.pos}>{groups.indexOf(group) + 1}</div>
-                  <div className={style.laps}>
+              <div className="w-full stats grow shadow-lg h-44 first:h-36 last:h-32 text-[#d4af37] first:text-[#c0c0c0] last:text-[#bf8970]">
+                <div className="stat place-items-center">
+                  <div className="stat-title text-black">
+                    {group.name} ({group.runners?.length})
+                  </div>
+                  <div className="stat-value">{groups.indexOf(group) + 1}</div>
+                  <div className="stat-desc text-black">
                     {group._count?.laps} {group._count?.laps === 1 ? 'Runde' : 'Runden'}
                   </div>
                 </div>
               </div>
             ))}
         </div>
-        <div className={style.rest}>
+        <div className="w-11/12 max-w-4xl flex flex-col gap-2">
           {groups &&
             groups.slice(3).map((group: GroupWithRunnersWithLaps, index: number) => (
-              <div key={index} className={style.item}>
-                <div className={style.pos}>{index + 3}</div>
-                <div className={style.name}>{group.name}</div>
-                <div className={style.laps}>
+              <div key={index} className="shadow-md rounded-full flex flex-row items-center justify-between p-1">
+                <a className="btn btn-circle btn-outline btn-primary">{index + 3}</a>
+                <div>{group.name}</div>
+                <div className="btn btn-ghost rounded-full">
                   {group._count?.laps} {group._count?.laps === 1 ? 'Runde' : 'Runden'}
                 </div>
               </div>

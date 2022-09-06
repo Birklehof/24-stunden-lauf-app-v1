@@ -3,7 +3,7 @@ import { useSession } from 'next-auth/react';
 import Layout from '../../components/layout';
 import { prisma } from '../../../prisma';
 import { Group, Lap, Runner } from '@prisma/client';
-import { Line, Pie } from 'react-chartjs-2';
+import { Bar, Doughnut, Line, Pie } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -22,6 +22,9 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend,
 interface RunnerWithGroupAndLaps extends Runner {
   group?: Group;
   laps: Lap[];
+  _count: {
+    laps: number;
+  };
 }
 
 export async function getServerSideProps(_context: any) {
@@ -54,6 +57,20 @@ export default function GeneralPage({ runners }: { runners: RunnerWithGroupAndLa
   const { status } = useSession();
   const loading = status === 'loading';
 
+  const hoursSinceFirstLap = Math.floor((Date.now() - new Date(runners[0].laps[0].runAt).getTime()) / 1000 / 60 / 60);
+  const totalLapsInEachHourSinceFirstLap = Array.from({ length: hoursSinceFirstLap }, (_, i) => {
+    const hour = i + 1;
+    const lapsInHour = runners.reduce((acc, runner) => {
+      const lapsInHour = runner.laps.filter((lap) => {
+        const lapHour = Math.floor(
+          (new Date(lap.runAt).getTime() - new Date(runners[0].laps[0].runAt).getTime()) / 1000 / 60 / 60
+        );
+        return lapHour <= hour;
+      });
+      return acc + lapsInHour.length;
+    }, 0);
+    return lapsInHour;
+  });
   const hours = Array.from({ length: 24 }, (_, i) => i);
   const lapsPerHour = hours.map((hour) => {
     return runners.reduce((acc, runner) => {
@@ -145,6 +162,10 @@ export default function GeneralPage({ runners }: { runners: RunnerWithGroupAndLa
     );
   });
 
+  const addAlpha = (color: string, alpha: number) => {
+    return color.replace(')', `, ${alpha})`).replace('rgb', 'rgba');
+  };
+
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== 'undefined' && loading) return null;
 
@@ -153,23 +174,57 @@ export default function GeneralPage({ runners }: { runners: RunnerWithGroupAndLa
       <div className="card w-11/12 max-w-4xl bg-base-100 shadow-xl">
         <div className="card-body">
           <h2 className="card-title">Übersicht</h2>
-          <div className="flex flex-col w-full lg:flex-row text-center justify-evenly">
-            <div>
-              <h1 className="text-5xl">{runners.length}</h1>
-              <p>Teilnehmer</p>
+          <div className="stats stats-vertical lg:stats-horizontal shadow">
+            <div className="stat place-items-center">
+              <div className="stat-title">Teilnehmer</div>
+              <div className="stat-value">{runners.length}</div>
             </div>
-            <div className="divider lg:divider-horizontal" />
-            <div>
-              <h1 className="text-5xl">{runners.reduce((acc, runner) => acc + Number(runner.laps.length) || 0, 0)}</h1>
-              <p>Runden gesamt</p>
+
+            <div className="stat place-items-center">
+              <div className="stat-title">Runden gesamt</div>
+              <div className="stat-value">
+                {runners.reduce((acc, runner) => acc + Number(runner.laps.length) || 0, 0)}
+              </div>
             </div>
-            <div className="divider lg:divider-horizontal" />
-            <div>
-              <h1 className="text-5xl">Ø {Math.round(averageLapsPerRunner)}</h1>
-              <p>Runden pro Teilnehmer</p>
+
+            <div className="stat place-items-center">
+              <div className="stat-title">Runden pro Teilnehmer</div>
+              <div className="stat-value">Ø {Math.round(averageLapsPerRunner)}</div>
+            </div>
+          </div>
+          <div className="stats stats-vertical lg:stats-horizontal shadow">
+            <div className="stat place-items-center">
+              <div className="stat-title">Gesamtstrecke</div>
+              <div className="stat-value">{runners.length * 2} km</div>
+              <div className="stat-desc">2km pro Runde</div>
+            </div>
+
+            <div className="stat place-items-center">
+              <div className="stat-title">Spendensumme</div>
+              <div className="stat-value">{runners.length * 2 * 0.45} €</div>
+              <div className="stat-desc">0,45 € pro km</div>
             </div>
           </div>
           <br />
+          <div>
+            <h3 className="card-title">Gesamtrundenzahl seit Start</h3>
+            <Line
+              data={{
+                labels: Array.from({ length: hoursSinceFirstLap }, (_, i) => i),
+                datasets: [
+                  {
+                    label: 'Runden',
+                    data: totalLapsInEachHourSinceFirstLap,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1,
+                    tension: 0.5
+                  }
+                ]
+              }}
+              // logaritmic scale
+            />
+          </div>
           <div>
             <h3 className="card-title">Runden über den Tagesverlauf</h3>
             <Line
@@ -182,7 +237,7 @@ export default function GeneralPage({ runners }: { runners: RunnerWithGroupAndLa
                     data: lapsPerHour,
                     backgroundColor: 'rgba(255, 99, 132, 0.2)',
                     borderColor: 'rgba(255, 99, 132, 1)',
-                    fill: false,
+                    borderWidth: 2,
                     tension: 0.3
                   },
                   {
@@ -190,7 +245,7 @@ export default function GeneralPage({ runners }: { runners: RunnerWithGroupAndLa
                     data: Array.from({ length: 24 }, () => Math.round(averageLapsPerRunner)),
                     backgroundColor: 'rgba(54, 162, 235, 0.2)',
                     borderColor: 'rgba(54, 162, 235, 1)',
-                    fill: false,
+                    borderWidth: 2,
                     tension: 0.1
                   }
                 ]
@@ -201,7 +256,7 @@ export default function GeneralPage({ runners }: { runners: RunnerWithGroupAndLa
           <div className="flex flex-col w-full lg:flex-row justify-around">
             <div className="max-w-md ml-auto mr-auto">
               <h3 className="card-title">Runden pro Gruppe</h3>
-              <Pie
+              <Doughnut
                 datasetIdKey="id"
                 data={{
                   labels: groups,
@@ -209,8 +264,9 @@ export default function GeneralPage({ runners }: { runners: RunnerWithGroupAndLa
                     {
                       label: 'Runden pro Gruppe',
                       data: lapsPerGroup,
-                      backgroundColor: backgroundColorForGroups,
-                      hoverOffset: 4
+                      backgroundColor: backgroundColorForGrades.map((color) => addAlpha(color, 0.2)),
+                      borderColor: backgroundColorForGrades,
+                      borderWidth: 2
                     }
                   ]
                 }}
@@ -219,7 +275,7 @@ export default function GeneralPage({ runners }: { runners: RunnerWithGroupAndLa
             <br />
             <div className="max-w-md ml-auto mr-auto">
               <h3 className="card-title">Durchschnittliche Runden pro Gruppe</h3>
-              <Pie
+              <Bar
                 datasetIdKey="id"
                 data={{
                   labels: groups,
@@ -227,10 +283,23 @@ export default function GeneralPage({ runners }: { runners: RunnerWithGroupAndLa
                     {
                       label: 'Ø Runden pro Gruppe',
                       data: averageLapsPerGroup,
-                      backgroundColor: backgroundColorForGroups,
-                      hoverOffset: 4
+                      borderColor: backgroundColorForGroups,
+                      backgroundColor: backgroundColorForGroups.map((color) => addAlpha(color, 0.2)),
+                      borderWidth: 2
                     }
                   ]
+                }}
+                options={{
+                  scales: {
+                    x: {
+                      display: false
+                    }
+                  },
+                  plugins: {
+                    legend: {
+                      display: false
+                    }
+                  }
                 }}
               />
             </div>
@@ -239,7 +308,7 @@ export default function GeneralPage({ runners }: { runners: RunnerWithGroupAndLa
           <div className="flex flex-col w-full lg:flex-row justify-around">
             <div className="max-w-md ml-auto mr-auto">
               <h3 className="card-title">Runden pro Klasse</h3>
-              <Pie
+              <Doughnut
                 datasetIdKey="id"
                 data={{
                   labels: grades,
@@ -247,8 +316,9 @@ export default function GeneralPage({ runners }: { runners: RunnerWithGroupAndLa
                     {
                       label: 'Runden pro Klasse',
                       data: lapsPerGrade,
-                      backgroundColor: backgroundColorForGrades,
-                      hoverOffset: 4
+                      backgroundColor: backgroundColorForGrades.map((color) => addAlpha(color, 0.2)),
+                      borderColor: backgroundColorForGrades,
+                      borderWidth: 2
                     }
                   ]
                 }}
@@ -257,7 +327,7 @@ export default function GeneralPage({ runners }: { runners: RunnerWithGroupAndLa
             <br />
             <div className="max-w-md ml-auto mr-auto">
               <h3 className="card-title">Durchschnittliche Runden pro Klasse</h3>
-              <Pie
+              <Bar
                 datasetIdKey="id"
                 data={{
                   labels: grades,
@@ -265,10 +335,23 @@ export default function GeneralPage({ runners }: { runners: RunnerWithGroupAndLa
                     {
                       label: 'Ø Runden pro Klasse',
                       data: averageLapsPerGrade,
-                      backgroundColor: backgroundColorForGrades,
-                      hoverOffset: 4
+                      borderColor: backgroundColorForGrades,
+                      backgroundColor: backgroundColorForGrades.map((color) => addAlpha(color, 0.2)),
+                      borderWidth: 2
                     }
                   ]
+                }}
+                options={{
+                  scales: {
+                    x: {
+                      display: false
+                    }
+                  },
+                  plugins: {
+                    legend: {
+                      display: false
+                    }
+                  }
                 }}
               />
             </div>

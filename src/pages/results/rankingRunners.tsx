@@ -67,31 +67,31 @@ export default function LeaderbordPage({ runners }: { runners: RunnerWithGroupAn
   return (
     <Layout>
       <div className={style.leaderboard}>
-        <div className={style.topThree}>
+        <div className="w-11/12 max-w-4xl flex flex-col md:flex-row justify-between items-end my-6 gap-2">
           {runners &&
             [runners[1], runners[0], runners[2]].map((runner: RunnerWithGroupAndLapsCount, index: number) => (
-              <div key={index} className={style.item}>
-                <div className={style.name}>
-                  {runner.firstName} {runner.lastName} ({runner.number})
-                </div>
-                <div className={style.podium}>
-                  <div className={style.pos}>{runners.indexOf(runner) + 1}</div>
-                  <div className={style.laps}>
+              <div className="w-full stats grow shadow-lg h-44 first:h-36 last:h-32 text-[#d4af37] first:text-[#c0c0c0] last:text-[#bf8970]">
+                <div className="stat place-items-center">
+                  <div className="stat-title text-black">
+                    {runner.firstName} {runner.lastName} ({runner.number})
+                  </div>
+                  <div className="stat-value">{runners.indexOf(runner) + 1}</div>
+                  <div className="stat-desc text-black">
                     {runner._count.laps} {runner._count.laps === 1 ? 'Runde' : 'Runden'}
                   </div>
                 </div>
               </div>
             ))}
         </div>
-        <div className={style.rest}>
+        <div className="w-11/12 max-w-4xl flex flex-col gap-2">
           {runners &&
             runners.slice(3).map((runner: RunnerWithGroupAndLapsCount, index: number) => (
-              <div key={index} className={style.item}>
-                <div className={style.pos}>{index + 3}</div>
-                <div className={style.name}>
+              <div key={index} className="shadow-md rounded-full flex flex-row items-center justify-between p-1">
+                <a className="btn btn-circle btn-outline btn-primary">{index + 3}</a>
+                <div>
                   {runner.firstName} {runner.lastName} ({runner.number})
                 </div>
-                <div className={style.laps}>
+                <div className="btn btn-ghost rounded-full">
                   {runner._count.laps} {runner._count.laps === 1 ? 'Runde' : 'Runden'}
                 </div>
               </div>
