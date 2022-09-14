@@ -174,7 +174,7 @@ export default function GeneralPage({ runners }: { runners: RunnerWithGroupAndLa
       <div className="card w-11/12 max-w-4xl bg-base-100 shadow-xl">
         <div className="card-body">
           <h2 className="card-title">Übersicht</h2>
-          <div className="stats stats-vertical lg:stats-horizontal shadow">
+          <div className="stats stats-vertical lg:stats-horizontal mb-2">
             <div className="stat place-items-center">
               <div className="stat-title">Teilnehmer</div>
               <div className="stat-value">{runners.length}</div>
@@ -192,17 +192,16 @@ export default function GeneralPage({ runners }: { runners: RunnerWithGroupAndLa
               <div className="stat-value">Ø {Math.round(averageLapsPerRunner)}</div>
             </div>
           </div>
-          <div className="stats stats-vertical lg:stats-horizontal shadow">
+          <div className="stats stats-vertical lg:stats-horizontal">
             <div className="stat place-items-center">
               <div className="stat-title">Gesamtstrecke</div>
-              <div className="stat-value">{runners.length * 2} km</div>
-              <div className="stat-desc">2km pro Runde</div>
+              <div className="stat-value">{Math.round(runners.length * averageLapsPerRunner * 0.6)} km</div>
+              <div className="stat-desc">600m pro Runde</div>
             </div>
 
             <div className="stat place-items-center">
-              <div className="stat-title">Spendensumme</div>
-              <div className="stat-value">{runners.length * 2 * 0.45} €</div>
-              <div className="stat-desc">0,45 € pro km</div>
+              <div className="stat-title">Strecke pro Teilnehmer</div>
+              <div className="stat-value">Ø {Math.round(averageLapsPerRunner * 0.6 * 10) / 10} km</div>
             </div>
           </div>
           <br />
