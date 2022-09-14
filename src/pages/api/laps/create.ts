@@ -39,6 +39,21 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         });
       }
 
+      const lastRound = await prisma.lap.findFirst({
+        where: {
+          runnerNumber: runner.number
+        },
+        orderBy: {
+          runAt: 'desc'
+        }
+      });
+
+      if (lastRound && new Date().getTime() - lastRound.runAt.getTime() < 1.5 * 60 * 1000) {
+        return res.status(400).json({
+          error: 'Die letze Runde ist noch nicht lange genug (1:30 Minuten) her'
+        });
+      }
+
       await prisma.lap.create({
         data: {
           runner: {
