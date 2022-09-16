@@ -36,7 +36,9 @@ export default function Header() {
       <div className="navbar bg-secondary z-[100]">
         <div className="navbar-start hidden lg:flex">
           <Link href={'/'}>
-            <a className="btn btn-ghost normal-case text-lg">Birklehof 24h Lauf</a>
+            <a className="btn btn-ghost normal-case text-lg">
+              <span style={{ color: '#004f49' }}>Birklehof 24h-Lauf</span>
+            </a>
           </Link>
         </div>
         <div className="navbar-start lg:hidden">
@@ -61,14 +63,25 @@ export default function Header() {
                   <a className="btn btn-sm btn-outline btn-primary rounded-full py-0 justify-start">Ergebnisse</a>
                 </Link>
               </li>
-              <li>
-                <Link href={'/results/rankingRunners'}>
-                  <a className="btn btn-sm btn-ghost rounded-full py-0 justify-start ml-4">Rangliste Läufer</a>
+              <li className="color-primary">
+                <Link href={'/results/ranking/runners'}>
+                  <a className="btn btn-sm btn-ghost rounded-full py-0 justify-start ml-4">
+                    <span style={{ color: '#004f49' }}>Rangliste Läufer</span>
+                  </a>
                 </Link>
               </li>
               <li>
-                <Link href={'/results/rankingGroups'}>
-                  <a className="btn btn-sm btn-ghost rounded-full py-0 justify-start ml-4">Rangliste Gruppen</a>
+                <Link href={'/results/ranking/grades'}>
+                  <a className="btn btn-sm btn-ghost rounded-full py-0 justify-start ml-4">
+                    <span style={{ color: '#004f49' }}>Rangliste Klassen</span>
+                  </a>
+                </Link>
+              </li>
+              <li>
+                <Link href={'/results/ranking/houses'}>
+                  <a className="btn btn-sm btn-ghost rounded-full py-0 justify-start ml-4">
+                    <span style={{ color: '#004f49' }}>Rangliste Häuser</span>
+                  </a>
                 </Link>
               </li>
               {(role === 'helper' || role == 'superadmin') && (
@@ -89,7 +102,9 @@ export default function Header() {
                   </li>
                   <li>
                     <Link href={'/runners/create'}>
-                      <a className="btn btn-sm btn-ghost rounded-full py-0 justify-start ml-4">Hinzufügen</a>
+                      <a className="btn btn-sm btn-ghost rounded-full py-0 justify-start ml-4">
+                        <span style={{ color: '#004f49' }}>Hinzufügen</span>
+                      </a>
                     </Link>
                   </li>
                 </>
@@ -103,7 +118,9 @@ export default function Header() {
                   </li>
                   <li>
                     <Link href={'/users/create'}>
-                      <a className="btn btn-sm btn-ghost rounded-full py-0 justify-start ml-4"> Hinzufügen</a>
+                      <a className="btn btn-sm btn-ghost rounded-full py-0 justify-start ml-4">
+                        <span style={{ color: '#004f49' }}>Hinzufügen</span>
+                      </a>
                     </Link>
                   </li>
                 </>
@@ -133,13 +150,18 @@ export default function Header() {
                   </Link>
                 </li>
                 <li>
-                  <Link href={'/results/rankingRunners'}>
+                  <Link href={'/results/ranking/runners'}>
                     <a className="btn btn-sm btn-outline btn-primary rounded-full py-0">Rangliste Läufer</a>
                   </Link>
                 </li>
                 <li>
-                  <Link href={'/results/rankingGroups'}>
-                    <a className="btn btn-sm btn-outline btn-primary rounded-full py-0">Rangliste Gruppen</a>
+                  <Link href={'/results/ranking/grades'}>
+                    <a className="btn btn-sm btn-outline btn-primary rounded-full py-0">Rangliste Klassen</a>
+                  </Link>
+                </li>
+                <li>
+                  <Link href={'/results/ranking/houses'}>
+                    <a className="btn btn-sm btn-outline btn-primary rounded-full py-0">Rangliste Häuser</a>
                   </Link>
                 </li>
               </ul>
@@ -212,12 +234,14 @@ export default function Header() {
         <div className="navbar-end">
           {session && (
             <a className="btn btn-ghost normal-case text-lg lg:btn-sm rounded-full lg:py-0" onClick={handleSignOut}>
-              Abmelden
+              <span style={{ color: '#004f49' }}>Abmelden</span>
             </a>
           )}
           {!session && (
             <Link href={'/auth/signin'} target={'_blank'}>
-              <a className="btn btn-primary normal-case text-lg lg:btn-sm rounded-full lg:py-0">Anmelden</a>
+              <a className="btn btn-primary normal-case text-lg lg:btn-sm rounded-full lg:py-0">
+                <span style={{ color: '#004f49' }}>Anmelden</span>
+              </a>
             </Link>
           )}
         </div>

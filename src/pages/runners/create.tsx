@@ -1,55 +1,31 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Layout from '../../components/layout';
 import { useSession } from 'next-auth/react';
 import AccessDenied from '../../components/accessDenied';
 import { useToasts } from 'react-toast-notifications';
-import { prisma } from '../../../prisma';
-import { Group } from '@prisma/client';
 import Link from 'next/link';
 
-export async function getServerSideProps(_context: any) {
-  const groups = await prisma.group.findMany();
-  return { props: { groups } };
-}
+const houseNames = process.env.HOUSES?.split(',') || ['Extern'];
+const gradeNames = process.env.GRADES?.split(',') || ['Keine Klasse'];
 
-export default function CreateRunnerPage({ init_groups }: { init_groups: Group[] }) {
+export default function CreateRunnerPage() {
   const { data: session, status } = useSession();
   const loading = status === 'loading';
-  const [groups, setGroups] = useState(init_groups);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [groupUuid, setGroupUuid] = useState('');
-  const [newGroupName, setNewGroupName] = useState('');
-  const [grade, setGrade] = useState('');
+  const [house, setHouse] = useState('Extern');
+  const [grade, setGrade] = useState('Keine Klasse');
   const [newNumber, setNewNumber] = useState(0);
   const { addToast } = useToasts();
 
   const resetForm = () => {
     setFirstName('');
     setLastName('');
-    setGroupUuid('');
-    setNewGroupName('');
+    setHouse('');
     setGrade('');
     setNewNumber(0);
     document.getElementById('firstName')?.focus();
   };
-
-  const getGroups = async () => {
-    const res = await fetch('/api/groups');
-    if (res.status === 200) {
-      const json = await res.json();
-      setGroups(json.data);
-    } else {
-      addToast('Ein Fehler ist aufgeregteren', {
-        appearance: 'error',
-        autoDismiss: true
-      });
-    }
-  };
-
-  useEffect(() => {
-    getGroups();
-  });
 
   const submitData = async (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -57,8 +33,7 @@ export default function CreateRunnerPage({ init_groups }: { init_groups: Group[]
       const body = {
         firstName: firstName,
         lastName: lastName,
-        groupUuid: groupUuid,
-        newGroupName: newGroupName,
+        house: house,
         grade: grade
       };
       const res = await fetch(`/api/runners/create`, {
@@ -72,7 +47,6 @@ export default function CreateRunnerPage({ init_groups }: { init_groups: Group[]
           appearance: 'success',
           autoDismiss: true
         });
-        await getGroups();
         setNewNumber(json.number);
       } else if (res.status === 400) {
         const json = await res.json();
@@ -162,57 +136,46 @@ export default function CreateRunnerPage({ init_groups }: { init_groups: Group[]
                 required
               />
               <label className="label">
-                <span className="label-text">Gruppe</span>
+                <span className="label-text">Haus*</span>
               </label>
               <select
-                name={'groupUuid'}
+                name={'house'}
                 className="select select-bordered w-full max-w-xs"
-                onChange={(e) => setGroupUuid(e.target.value)}
-                value={groupUuid}
+                onChange={(e) => setHouse(e.target.value)}
+                value={house}
+                required
               >
-                <option value="">Keine Gruppe</option>
-                {groups &&
-                  groups.map((group) => (
-                    <option key={group.uuid} value={group.uuid}>
-                      {group.name}
-                    </option>
-                  ))}
-                <option value="new">Neue Gruppe</option>
+                {houseNames.map((houseName) => (
+                  <option key={houseName} value={houseName}>
+                    {houseName}
+                  </option>
+                ))}
               </select>
-              {groupUuid === 'new' && (
-                <>
-                  <label className="label">
-                    <span className="label-text">Gruppenname</span>
-                  </label>
-                  <input
-                    name={'newGroupName'}
-                    className="input input-bordered w-full max-w-xs"
-                    onChange={(e) => setNewGroupName(e.target.value)}
-                    type={'text'}
-                    value={newGroupName}
-                    required
-                  />
-                </>
-              )}
               <label className="label">
                 <span className="label-text">Klasse</span>
               </label>
-              <input
-                name={'grade'}
-                className="input input-bordered w-full max-w-xs"
+              <select
+                name={'garde'}
+                className="select select-bordered w-full max-w-xs"
                 onChange={(e) => setGrade(e.target.value)}
-                type={'text'}
                 value={grade}
-              />
+                required
+              >
+                {gradeNames.map((gradeName) => (
+                  <option key={gradeName} value={gradeName}>
+                    {gradeName}
+                  </option>
+                ))}
+              </select>
               <div className="mt-4">
                 <div className="flex gap-y-2 w-full justify-evenly flex-col sm:flex-row">
                   <input
                     className="btn btn-primary"
                     type={'submit'}
                     value={'Hinzufügen'}
-                    disabled={!firstName || !lastName || (groupUuid === 'new' && !newGroupName)}
+                    disabled={!firstName || !lastName || !house || !grade}
                   />
-                  <Link href={'/users'}>
+                  <Link href={'/runners'}>
                     <a className={'btn btn-outline btn-error'}>Abbrechen</a>
                   </Link>
                 </div>

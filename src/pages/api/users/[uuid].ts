@@ -17,8 +17,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
     await handleGET(userUuid, res);
   } else if (req.method === 'PATCH') {
     await handlePATCH(userUuid, res, req);
-  }
-  if (req.method === 'DELETE') {
+  } else if (req.method === 'DELETE') {
     await handleDELETE(userUuid, res);
   } else {
     return res.status(405).end();

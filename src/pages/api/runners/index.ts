@@ -15,7 +15,6 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
     try {
       let runners = await prisma.runner.findMany({
         include: {
-          group: true,
           _count: {
             select: {
               laps: true

@@ -3,12 +3,11 @@ import { useSession } from 'next-auth/react';
 import Layout from '../../components/layout';
 import AccessDenied from '../../components/accessDenied';
 import { prisma } from '../../../prisma';
-import { Group, Runner, Lap } from '@prisma/client';
+import { Runner, Lap } from '@prisma/client';
 import { IoTrashOutline } from 'react-icons/io5';
 import { useToasts } from 'react-toast-notifications';
 
 interface RunnerWithGroupAndLapsCount extends Runner {
-  group?: Group;
   _count: {
     laps: number;
   };
@@ -17,7 +16,6 @@ interface RunnerWithGroupAndLapsCount extends Runner {
 export async function getServerSideProps(_context: any) {
   let runners = await prisma.runner.findMany({
     include: {
-      group: true,
       _count: {
         select: {
           laps: true
@@ -112,7 +110,7 @@ export default function IndexRunnerPage({ init_runners }: { init_runners: Runner
                   <th>Vorname</th>
                   <th>Nachname</th>
                   <th>Klasse</th>
-                  <th>Gruppe</th>
+                  <th>Haus</th>
                   <th>Runden</th>
                   <th></th>
                 </tr>
@@ -125,7 +123,7 @@ export default function IndexRunnerPage({ init_runners }: { init_runners: Runner
                       <td>{runner.firstName}</td>
                       <td>{runner.lastName}</td>
                       <td>{runner.grade}</td>
-                      <td>{runner.group?.name}</td>
+                      <td>{runner.house}</td>
                       <td>{runner._count.laps}</td>
                       <td>
                         <button className={'deleteButton'} onClick={() => handleDelete(runner.number)}>

@@ -1,12 +1,11 @@
 import React from 'react';
 import { useSession } from 'next-auth/react';
-import Layout from '../../components/layout';
-import { prisma } from '../../../prisma';
-import { Group, Runner, Lap } from '@prisma/client';
-import style from '../../styles/results-scoreboard.module.css';
+import Layout from '../../../components/layout';
+import { prisma } from '../../../../prisma';
+import { Runner } from '@prisma/client';
+import style from '../../../styles/results-scoreboard.module.css';
 
-interface RunnerWithGroupAndLapsCount extends Runner {
-  group?: Group;
+interface RunnerWithLapCount extends Runner {
   _count: {
     laps: number;
   };
@@ -15,7 +14,6 @@ interface RunnerWithGroupAndLapsCount extends Runner {
 export async function getServerSideProps(_context: any) {
   let runners = await prisma.runner.findMany({
     include: {
-      group: true,
       _count: {
         select: {
           laps: true
@@ -37,14 +35,12 @@ export async function getServerSideProps(_context: any) {
   return { props: { runners } };
 }
 
-export default function LeaderbordPage({ runners }: { runners: RunnerWithGroupAndLapsCount[] }) {
+export default function LeaderbordPage({ runners }: { runners: RunnerWithLapCount[] }) {
   const { status } = useSession();
   const loading = status === 'loading';
 
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== 'undefined' && loading) return null;
-
-  console.log(runners);
 
   // Make sure runners has a least three elements
   if (runners.length < 3) {
@@ -54,7 +50,7 @@ export default function LeaderbordPage({ runners }: { runners: RunnerWithGroupAn
           number: i,
           firstName: 'Niemand',
           lastName: '',
-          groupUuid: null,
+          house: '',
           grade: '',
           _count: {
             laps: 0
@@ -69,7 +65,7 @@ export default function LeaderbordPage({ runners }: { runners: RunnerWithGroupAn
       <div className={style.leaderboard}>
         <div className="w-11/12 max-w-4xl flex flex-col md:flex-row justify-between items-end my-6 gap-2">
           {runners &&
-            [runners[1], runners[0], runners[2]].map((runner: RunnerWithGroupAndLapsCount, index: number) => (
+            [runners[1], runners[0], runners[2]].map((runner: RunnerWithLapCount, index: number) => (
               <div
                 key={index}
                 className="w-full stats grow shadow-lg h-44 first:h-36 last:h-32 text-[#d4af37] first:text-[#c0c0c0] last:text-[#bf8970]"
@@ -88,7 +84,7 @@ export default function LeaderbordPage({ runners }: { runners: RunnerWithGroupAn
         </div>
         <div className="w-11/12 max-w-4xl flex flex-col gap-2">
           {runners &&
-            runners.slice(3).map((runner: RunnerWithGroupAndLapsCount, index: number) => (
+            runners.slice(3).map((runner: RunnerWithLapCount, index: number) => (
               <div key={index} className="shadow-md rounded-full flex flex-row items-center justify-between p-1">
                 <a className="btn btn-circle btn-outline btn-primary">{index + 3}</a>
                 <div>

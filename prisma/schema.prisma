@@ -17,19 +17,12 @@ model User {
   role  String @default("guest")
 }
 
-model Group {
-  uuid   String   @id @default(uuid())
-  name   String   @unique
-  runners Runner[]
-}
-
 model Runner {
   number    Int     @id @default(autoincrement())
   firstName String
   lastName  String
-  group     Group?  @relation(fields: [groupUuid], references: [uuid])
-  groupUuid String?
-  grade     String?
+  house     String @default("Extern")
+  grade     String @default("Keine Klasse")
   laps      Lap[]
 }
 

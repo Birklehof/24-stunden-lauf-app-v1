@@ -2,8 +2,8 @@ import React from 'react';
 import { useSession } from 'next-auth/react';
 import Layout from '../../components/layout';
 import { prisma } from '../../../prisma';
-import { Group, Lap, Runner } from '@prisma/client';
-import { Bar, Doughnut, Line, Pie } from 'react-chartjs-2';
+import { Lap, Runner } from '@prisma/client';
+import { Bar, Doughnut, Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -19,8 +19,11 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement);
 
-interface RunnerWithGroupAndLaps extends Runner {
-  group?: Group;
+const houseNames = process.env.HOUSES?.split(',') || ['Extern'];
+const gradeNames = process.env.GRADES?.split(',') || ['Keine Klasse'];
+const metersPerLap = parseInt(process.env.METERS_PER_LAP || '600');
+
+interface RunnerWitLapsAndLapCount extends Runner {
   laps: Lap[];
   _count: {
     laps: number;
@@ -30,7 +33,6 @@ interface RunnerWithGroupAndLaps extends Runner {
 export async function getServerSideProps(_context: any) {
   let runners = await prisma.runner.findMany({
     include: {
-      group: true,
       laps: true,
       _count: {
         select: {
@@ -49,15 +51,25 @@ export async function getServerSideProps(_context: any) {
       }
     ]
   });
+  let firstLap = await prisma.lap.findFirst({
+    orderBy: {
+      runAt: 'asc'
+    }
+  });
   runners = JSON.parse(JSON.stringify(runners));
-  return { props: { runners } };
+  firstLap = JSON.parse(JSON.stringify(firstLap));
+  return { props: { runners, firstLap } };
 }
 
-export default function GeneralPage({ runners }: { runners: RunnerWithGroupAndLaps[] }) {
+export default function GeneralPage({ runners, firstLap }: { runners: RunnerWitLapsAndLapCount[]; firstLap: Lap }) {
   const { status } = useSession();
   const loading = status === 'loading';
 
-  const hoursSinceFirstLap = Math.floor((Date.now() - new Date(runners[0].laps[0].runAt).getTime()) / 1000 / 60 / 60);
+  let hoursSinceFirstLap = 0;
+  if (firstLap) {
+    hoursSinceFirstLap = Math.floor((Date.now() - new Date(firstLap.runAt).getTime()) / 1000 / 60 / 60);
+  }
+  hoursSinceFirstLap = hoursSinceFirstLap < 2 ? 2 : hoursSinceFirstLap;
   const totalLapsInEachHourSinceFirstLap = Array.from({ length: hoursSinceFirstLap }, (_, i) => {
     const hour = i + 1;
     const lapsInHour = runners.reduce((acc, runner) => {
@@ -81,85 +93,31 @@ export default function GeneralPage({ runners }: { runners: RunnerWithGroupAndLa
     runners.reduce((acc, runner) => {
       return acc + runner.laps.length;
     }, 0) / runners.length;
-  let groups = runners.reduce((acc, runner) => {
-    if (runner.group && !acc.includes(runner.group.name)) {
-      acc.push(runner.group.name);
-    }
-    return acc;
-  }, [] as string[]);
-  groups.push('Keine Gruppe');
-  const lapsPerGroup = groups.map((group) => {
-    return runners.reduce((acc, runner) => {
-      if (runner.group && runner.group.name === group) {
-        return acc + runner.laps.length;
-      }
-      if (!runner.group && group === 'Keine Gruppe') {
-        return acc + runner.laps.length;
-      }
-      return acc;
-    }, 0);
+
+  const houses = houseNames.map((name) => {
+    return {
+      name,
+      color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+      _count: {
+        laps: runners.filter((runner) => runner.house === name).reduce((sum, runner) => sum + runner._count.laps, 0)
+      },
+      averageLaps:
+        runners.filter((runner) => runner.house === name).reduce((sum, runner) => sum + runner.laps.length, 0) /
+        runners.filter((runner) => runner.house === name).length
+    };
   });
-  const backgroundColorForGroups = groups.map((_, i) => {
-    return `hsl(${(i * 360) / groups.length}, 100%, 50%)`;
-  });
-  let averageLapsPerGroup = groups.map((group) => {
-    return runners.reduce((acc, runner) => {
-      if (runner.group && runner.group.name === group) {
-        return acc + runner.laps.length;
-      }
-      if (!runner.group && group === 'Keine Gruppe') {
-        return acc + runner.laps.length;
-      }
-      return acc;
-    }, 0);
-  });
-  averageLapsPerGroup = averageLapsPerGroup.map((laps, index) => {
-    return Math.round(
-      laps /
-        runners.filter(
-          (runner) => (!runner.group?.name && groups[index] === 'Keine Gruppe') || runner.group?.name === groups[index]
-        ).length
-    );
-  });
-  let grades = runners.reduce((acc, runner) => {
-    if (runner.grade && !acc.includes(runner.grade)) {
-      acc.push(runner.grade);
-    }
-    return acc;
-  }, [] as string[]);
-  grades.push('Keine Klasse');
-  const lapsPerGrade = grades.map((grade) => {
-    return runners.reduce((acc, runner) => {
-      if (runner.grade && runner.grade === grade) {
-        return acc + runner.laps.length;
-      }
-      if (!runner.grade && grade === 'Keine Klasse') {
-        return acc + runner.laps.length;
-      }
-      return acc;
-    }, 0);
-  });
-  const backgroundColorForGrades = grades.map((_, i) => {
-    return `hsl(${(i * 360) / grades.length}, 100%, 50%)`;
-  });
-  let averageLapsPerGrade = grades.map((grade) => {
-    return runners.reduce((acc, runner) => {
-      if (runner.grade && runner.grade === grade) {
-        return acc + runner.laps.length;
-      }
-      if (!runner.grade && grade === 'Keine Klasse') {
-        return acc + runner.laps.length;
-      }
-      return acc;
-    }, 0);
-  });
-  averageLapsPerGrade = averageLapsPerGrade.map((laps, index) => {
-    return Math.round(
-      laps /
-        runners.filter(
-          (runner) => (!runner.grade && grades[index] === 'Keine Klasse') || runner.grade === grades[index]
-        ).length
-    );
+
+  const grades = gradeNames.map((name) => {
+    return {
+      name,
+      color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+      _count: {
+        laps: runners.filter((runner) => runner.grade === name).reduce((sum, runner) => sum + runner._count.laps, 0)
+      },
+      averageLaps:
+        runners.filter((runner) => runner.grade === name).reduce((sum, runner) => sum + runner.laps.length, 0) /
+        runners.filter((runner) => runner.grade === name).length
+    };
   });
 
   const addAlpha = (color: string, alpha: number) => {
@@ -189,19 +147,21 @@ export default function GeneralPage({ runners }: { runners: RunnerWithGroupAndLa
 
             <div className="stat place-items-center">
               <div className="stat-title">Runden pro Teilnehmer</div>
-              <div className="stat-value">Ø {Math.round(averageLapsPerRunner)}</div>
+              <div className="stat-value">Ø {Math.round(averageLapsPerRunner || 0)}</div>
             </div>
           </div>
           <div className="stats stats-vertical lg:stats-horizontal">
             <div className="stat place-items-center">
               <div className="stat-title">Gesamtstrecke</div>
-              <div className="stat-value">{Math.round(runners.length * averageLapsPerRunner * 0.6)} km</div>
-              <div className="stat-desc">600m pro Runde</div>
+              <div className="stat-value">
+                {Math.round((runners.length * averageLapsPerRunner * metersPerLap) / 1000 || 0)} km
+              </div>
+              <div className="stat-desc">{metersPerLap}m pro Runde</div>
             </div>
 
             <div className="stat place-items-center">
               <div className="stat-title">Strecke pro Teilnehmer</div>
-              <div className="stat-value">Ø {Math.round(averageLapsPerRunner * 0.6 * 10) / 10} km</div>
+              <div className="stat-value">Ø {Math.round(averageLapsPerRunner * 0.6 * 10) / 10 || 0} km</div>
             </div>
           </div>
           <br />
@@ -221,7 +181,6 @@ export default function GeneralPage({ runners }: { runners: RunnerWithGroupAndLa
                   }
                 ]
               }}
-              // logaritmic scale
             />
           </div>
           <div>
@@ -252,38 +211,70 @@ export default function GeneralPage({ runners }: { runners: RunnerWithGroupAndLa
             />
           </div>
           <br />
-          <div className="flex flex-col w-full lg:flex-row justify-around">
-            <div className="max-w-md ml-auto mr-auto">
-              <h3 className="card-title">Runden pro Gruppe</h3>
+          <h3 className="card-title">Häuser</h3>
+          <div className="flex flex-col w-full justify-around items-center gap-4 max-w-lg mx-auto lg:flex-row lg:m-0 lg:max-w-none">
+            <div className="hidden lg:block">
               <Doughnut
                 datasetIdKey="id"
+                width={400}
                 data={{
-                  labels: groups,
+                  labels: houses.map((house) => house.name),
                   datasets: [
                     {
                       label: 'Runden pro Gruppe',
-                      data: lapsPerGroup,
-                      backgroundColor: backgroundColorForGrades.map((color) => addAlpha(color, 0.2)),
-                      borderColor: backgroundColorForGrades,
+                      data: houses.map((house) => house._count.laps),
+                      backgroundColor: houses.map((house) => addAlpha(house.color, 0.2)),
+                      borderColor: houses.map((house) => house.color),
                       borderWidth: 2
                     }
                   ]
                 }}
+                options={{
+                  plugins: {
+                    legend: {
+                      position: 'left'
+                    }
+                  }
+                }}
               />
             </div>
-            <br />
-            <div className="max-w-md ml-auto mr-auto">
-              <h3 className="card-title">Durchschnittliche Runden pro Gruppe</h3>
+            <div className="block lg:hidden">
+              <Doughnut
+                datasetIdKey="id"
+                width={200}
+                height={200}
+                data={{
+                  labels: houses.map((house) => house.name),
+                  datasets: [
+                    {
+                      label: 'Runden pro Gruppe',
+                      data: houses.map((house) => house._count.laps),
+                      backgroundColor: houses.map((house) => addAlpha(house.color, 0.2)),
+                      borderColor: houses.map((house) => house.color),
+                      borderWidth: 2
+                    }
+                  ]
+                }}
+                options={{
+                  plugins: {
+                    legend: {
+                      display: false
+                    }
+                  }
+                }}
+              />
+            </div>
+            <div>
               <Bar
                 datasetIdKey="id"
                 data={{
-                  labels: groups,
+                  labels: houses.map((house) => house.name),
                   datasets: [
                     {
-                      label: 'Ø Runden pro Gruppe',
-                      data: averageLapsPerGroup,
-                      borderColor: backgroundColorForGroups,
-                      backgroundColor: backgroundColorForGroups.map((color) => addAlpha(color, 0.2)),
+                      label: 'Ø Runden pro Haus',
+                      data: houses.map((house) => house.averageLaps),
+                      backgroundColor: houses.map((house) => addAlpha(house.color, 0.2)),
+                      borderColor: houses.map((house) => house.color),
                       borderWidth: 2
                     }
                   ]
@@ -304,38 +295,70 @@ export default function GeneralPage({ runners }: { runners: RunnerWithGroupAndLa
             </div>
           </div>
           <br />
-          <div className="flex flex-col w-full lg:flex-row justify-around">
-            <div className="max-w-md ml-auto mr-auto">
-              <h3 className="card-title">Runden pro Klasse</h3>
+          <h3 className="card-title">Klassen</h3>
+          <div className="flex flex-col w-full justify-around items-center gap-4 max-w-lg mx-auto lg:flex-row lg:m-0 lg:max-w-none">
+            <div className="hidden lg:block">
               <Doughnut
                 datasetIdKey="id"
+                width={400}
                 data={{
-                  labels: grades,
+                  labels: grades.map((grade) => grade.name),
                   datasets: [
                     {
                       label: 'Runden pro Klasse',
-                      data: lapsPerGrade,
-                      backgroundColor: backgroundColorForGrades.map((color) => addAlpha(color, 0.2)),
-                      borderColor: backgroundColorForGrades,
+                      data: grades.map((grade) => grade._count.laps),
+                      backgroundColor: grades.map((grade) => addAlpha(grade.color, 0.2)),
+                      borderColor: grades.map((grade) => grade.color),
                       borderWidth: 2
                     }
                   ]
                 }}
+                options={{
+                  plugins: {
+                    legend: {
+                      position: 'left'
+                    }
+                  }
+                }}
               />
             </div>
-            <br />
-            <div className="max-w-md ml-auto mr-auto">
-              <h3 className="card-title">Durchschnittliche Runden pro Klasse</h3>
+            <div className="block lg:hidden">
+              <Doughnut
+                datasetIdKey="id"
+                width={200}
+                height={200}
+                data={{
+                  labels: grades.map((grade) => grade.name),
+                  datasets: [
+                    {
+                      label: 'Runden pro Gruppe',
+                      data: grades.map((grade) => grade._count.laps),
+                      backgroundColor: grades.map((grade) => addAlpha(grade.color, 0.2)),
+                      borderColor: grades.map((grade) => grade.color),
+                      borderWidth: 2
+                    }
+                  ]
+                }}
+                options={{
+                  plugins: {
+                    legend: {
+                      display: false
+                    }
+                  }
+                }}
+              />
+            </div>
+            <div>
               <Bar
                 datasetIdKey="id"
                 data={{
-                  labels: grades,
+                  labels: grades.map((grade) => grade.name),
                   datasets: [
                     {
-                      label: 'Ø Runden pro Klasse',
-                      data: averageLapsPerGrade,
-                      borderColor: backgroundColorForGrades,
-                      backgroundColor: backgroundColorForGrades.map((color) => addAlpha(color, 0.2)),
+                      label: 'Ø Runden pro Haus',
+                      data: grades.map((grade) => grade.averageLaps),
+                      backgroundColor: grades.map((grade) => addAlpha(grade.color, 0.2)),
+                      borderColor: grades.map((grade) => grade.color),
                       borderWidth: 2
                     }
                   ]
@@ -355,7 +378,6 @@ export default function GeneralPage({ runners }: { runners: RunnerWithGroupAndLa
               />
             </div>
           </div>
-          <br />
         </div>
       </div>
     </Layout>
