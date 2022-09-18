@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '../../../../prisma';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
-import middleware from '../middleware';
+import isAuthenticated from '../middleware';
 import { getToken } from 'next-auth/jwt';
 
 const secret = process.env.NEXTAUTH_SECRET;
@@ -9,7 +9,7 @@ const secret = process.env.NEXTAUTH_SECRET;
 // POST /api/runners/create
 // Required fields in body: firstName, lastName, groupUuid, newGroupName, grade
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-  if (!(await middleware(await getToken({ req, secret }), ['helper', 'superadmin']))) {
+  if (!(await isAuthenticated(await getToken({ req, secret }), ['helper', 'superadmin']))) {
     return res.status(403).end();
   }
 

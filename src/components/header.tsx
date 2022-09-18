@@ -252,7 +252,7 @@ export default function Header() {
             </a>
           )}
           {!session && (
-            <Link href={'/api/auth/signin'} target={'_blank'}>
+            <Link href={'/auth/signin'} target={'_blank'}>
               <a className="btn btn-primary normal-case text-lg lg:btn-sm rounded-full lg:py-0">
                 <span>Anmelden</span>
               </a>

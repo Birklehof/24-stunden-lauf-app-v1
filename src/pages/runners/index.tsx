@@ -6,6 +6,7 @@ import { prisma } from '../../../prisma';
 import { Runner, Lap } from '@prisma/client';
 import { IoTrashOutline } from 'react-icons/io5';
 import { useToasts } from 'react-toast-notifications';
+import isAuthenticated from '../middleware';
 
 interface RunnerWithGroupAndLapsCount extends Runner {
   _count: {
@@ -88,8 +89,7 @@ export default function IndexRunnerPage({ initRunners }: { initRunners: RunnerWi
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== 'undefined' && loading) return null;
 
-  // If the user is not authenticated or does not have the correct role, display access denied message
-  if (!session || (session.userRole !== 'helper' && session.userRole !== 'superadmin')) {
+  if (!isAuthenticated(session, ['helper', 'superadmin'])) {
     return (
       <Layout>
         <AccessDenied />

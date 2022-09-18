@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import AccessDenied from '../../components/accessDenied';
 import { useToasts } from 'react-toast-notifications';
 import Link from 'next/link';
+import isAuthenticated from '../middleware';
 
 export default function CreateUserPage() {
   const { data: session, status } = useSession();
@@ -66,8 +67,7 @@ export default function CreateUserPage() {
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== 'undefined' && loading) return null;
 
-  // If the user is not authenticated or does not have the correct role, display access denied message
-  if (!session || session.userRole !== 'superadmin') {
+  if (!isAuthenticated(session, ['superadmin'])) {
     return (
       <Layout>
         <AccessDenied />

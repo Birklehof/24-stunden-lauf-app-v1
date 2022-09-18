@@ -9,4 +9,11 @@ declare module 'next-auth/jwt' {
   }
 }
 
+declare module 'next-auth' {
+  interface Session {
+    /** The user's role. */
+    userRole: string | 'helper' | 'superadmin';
+  }
+}
+
 declare module 'next-auth/react' {}

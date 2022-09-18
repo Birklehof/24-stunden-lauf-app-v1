@@ -7,6 +7,7 @@ import { User } from '@prisma/client';
 import { IoCreateOutline, IoTrashOutline } from 'react-icons/io5';
 import { useToasts } from 'react-toast-notifications';
 import Link from 'next/link';
+import isAuthenticated from '../middleware';
 
 export async function getServerSideProps(_context: any) {
   const users = await prisma.user.findMany();
@@ -71,8 +72,7 @@ export default function IndexUserPage({ initUsers }: { initUsers: User[] }) {
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== 'undefined' && loading) return null;
 
-  // If the user is not authenticated or does not have the correct role, display access denied message
-  if (!session || session.userRole !== 'superadmin') {
+  if (!isAuthenticated(session, ['superadmin'])) {
     return (
       <Layout>
         <AccessDenied />

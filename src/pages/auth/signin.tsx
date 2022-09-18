@@ -1,29 +1,16 @@
 import Layout from '../../components/layout';
 import { getProviders, signIn, useSession } from 'next-auth/react';
-import { IoLogoGoogle, IoLogoApple, IoLogoGithub, IoArrowRedoOutline } from 'react-icons/io5';
+import { IoLogoGoogle, IoLogoApple, IoLogoGithub } from 'react-icons/io5';
 import { Provider } from 'next-auth/providers';
 import { useState } from 'react';
-import { useRouter } from 'next/router';
 
 // Overwrites the default signing-page by next-auth
 export default function SignIn({ providers }: { providers: Provider[] }) {
   const { data: session } = useSession();
-  const router = useRouter();
   const [accessToken, setAccessToken] = useState('');
   if (session) {
     document.location.href = '/';
   }
-
-  const signInWithToken = async () => {
-    const res = await fetch(`/api/auth/accessToken`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: accessToken })
-    });
-    if (res.status === 200) {
-      router.push('/');
-    }
-  };
 
   return (
     <Layout>
@@ -40,7 +27,7 @@ export default function SignIn({ providers }: { providers: Provider[] }) {
                 value={accessToken}
               />
               <button
-                onClick={signInWithToken}
+                onClick={() => signIn('credentials', { token: accessToken })}
                 disabled={
                   !new RegExp('^[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}$').test(
                     accessToken
@@ -54,8 +41,9 @@ export default function SignIn({ providers }: { providers: Provider[] }) {
             <div className="divider">ODER</div>
             <div className="w-full flex flex-col gap-2">
               {providers &&
-                Object.values(providers).map((provider) => (
-                  <>
+                Object.values(providers)
+                  .filter((provider) => provider.type === 'oauth')
+                  .map((provider) => (
                     <button
                       key={provider.name}
                       className="btn gap-2 btn-block btn-secondary"
@@ -63,13 +51,11 @@ export default function SignIn({ providers }: { providers: Provider[] }) {
                     >
                       <>
                         {provider.id === 'google' && <IoLogoGoogle />}
-                        {provider.id === 'apple' && <IoLogoApple />}
                         {provider.id === 'github' && <IoLogoGithub />}
                       </>{' '}
                       Sign in with {provider.name}
                     </button>
-                  </>
-                ))}
+                  ))}
             </div>
           </div>
         </div>

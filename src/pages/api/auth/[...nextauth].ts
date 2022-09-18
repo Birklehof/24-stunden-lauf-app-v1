@@ -7,10 +7,9 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
 export default NextAuth({
-  // pages: {
-  //   signIn: '/auth/signin'
-  // },
-  pages: {},
+  pages: {
+    signIn: '/auth/signin'
+  },
   // https://next-auth.js.org/configuration/providers/oauth
   providers: [
     CredentialsProvider({
@@ -62,9 +61,6 @@ export default NextAuth({
   },
   callbacks: {
     async jwt({ token, user }) {
-      console.log('jwt', token);
-      console.log('jwt', user);
-
       if (user?.isToken) {
         token.userRole = 'helper';
         token.isToken = true;

@@ -1,12 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '../../../../prisma';
-import middleware from '../middleware';
+import isAuthenticated from '../middleware';
 import { getToken } from 'next-auth/jwt';
 
 const secret = process.env.NEXTAUTH_SECRET;
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-  if (!(await middleware(await getToken({ req, secret }), ['helper', 'superadmin']))) {
+  if (!(await isAuthenticated(await getToken({ req, secret }), ['helper', 'superadmin']))) {
     return res.status(403).end();
   }
 
