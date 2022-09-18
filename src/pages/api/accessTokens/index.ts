@@ -16,6 +16,9 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
       const accessTokens = await prisma.accessToken.findMany({
         include: {
           createdBy: true
+        },
+        orderBy: {
+          createdAt: 'desc'
         }
       });
       return res.status(200).json({
