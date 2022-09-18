@@ -63,7 +63,7 @@ export default function DeleteLapPage() {
   if (typeof window !== 'undefined' && loading) return null;
 
   // If the user is not authenticated or does not have the correct role, display access denied message
-  if (!session || session.userRole !== 'superadmin') {
+  if (!session || (session.userRole !== 'helper' && session.userRole !== 'superadmin')) {
     return (
       <Layout>
         <AccessDenied />
