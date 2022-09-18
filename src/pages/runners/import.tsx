@@ -4,7 +4,6 @@ import Router from 'next/router';
 import AccessDenied from '../../components/accessDenied';
 import { useSession } from 'next-auth/react';
 import { useToasts } from 'react-toast-notifications';
-import { IoDocumentAttachOutline } from 'react-icons/io5';
 import isAuthenticated from '../middleware';
 
 export default function ImportProductsPage() {
