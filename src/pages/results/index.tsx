@@ -71,7 +71,7 @@ export default function GeneralPage({ runners, firstLap }: { runners: RunnerWitL
   }
   hoursSinceFirstLap = hoursSinceFirstLap < 2 ? 2 : hoursSinceFirstLap;
   const totalLapsInEachHourSinceFirstLap = Array.from({ length: hoursSinceFirstLap }, (_, i) => {
-    const hour = i + 1;
+    const hour: number = i + 1;
     const lapsInHour = runners.reduce((acc, runner) => {
       const lapsInHour = runner.laps.filter((lap) => {
         const lapHour = Math.floor(

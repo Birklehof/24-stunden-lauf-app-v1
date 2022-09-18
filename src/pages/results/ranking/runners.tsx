@@ -48,6 +48,7 @@ export default function LeaderbordPage({ runners }: { runners: RunnerWithLapCoun
       if (!runners[i]) {
         runners[i] = {
           number: i,
+          studentNumber: 0,
           firstName: 'Niemand',
           lastName: '',
           house: '',
@@ -63,12 +64,12 @@ export default function LeaderbordPage({ runners }: { runners: RunnerWithLapCoun
   return (
     <Layout>
       <div className={style.leaderboard}>
-        <div className="w-11/12 max-w-4xl flex flex-col md:flex-row justify-between items-end my-6 gap-2">
+        <div className="w-11/12 max-w-4xl flex flex-col justify-between items-center my-6 gap-2">
           {runners &&
-            [runners[1], runners[0], runners[2]].map((runner: RunnerWithLapCount, index: number) => (
+            [runners[0], runners[1], runners[2]].map((runner: RunnerWithLapCount, index: number) => (
               <div
                 key={index}
-                className="w-full stats grow shadow-lg h-44 first:h-36 last:h-32 text-[#d4af37] first:text-[#c0c0c0] last:text-[#bf8970]"
+                className="w-full stats grow shadow-lg first:h-44 first:z-20 z-10 last:z-0 h-36 last:h-32 text-[#d4af37] first:text-[#c0c0c0] last:text-[#bf8970] mt-[-20px]"
               >
                 <div className="stat place-items-center">
                   <div className="stat-title text-black">
