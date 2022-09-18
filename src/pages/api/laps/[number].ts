@@ -6,7 +6,7 @@ import { getToken } from 'next-auth/jwt';
 const secret = process.env.NEXTAUTH_SECRET;
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-  if (!(await middleware(await getToken({ req, secret }), ['superadmin']))) {
+  if (!(await middleware(await getToken({ req, secret }), ['helper', 'superadmin']))) {
     return res.status(403).end();
   }
 
@@ -19,7 +19,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
   }
 }
 
-// DELETE /api/runner/:number
+// DELETE /api/laps/:number
 async function handleDELETE(number: number, res: NextApiResponse) {
   try {
     const runner = await prisma.runner.findUnique({
@@ -27,18 +27,22 @@ async function handleDELETE(number: number, res: NextApiResponse) {
     });
 
     if (!runner) {
-      return res.status(404).end();
+      return res.status(400).json({
+        error: 'Kein Läufer mit dieser Startnummer'
+      });
     }
 
-    await prisma.lap.deleteMany({
+    const laps = await prisma.lap.deleteMany({
       where: {
         runnerNumber: runner.number
       }
     });
 
-    await prisma.runner.delete({
-      where: { number: runner.number }
-    });
+    if (laps.count === 0) {
+      return res.status(400).json({
+        error: 'Der Läufer hat keine Runden'
+      });
+    }
     return res.status(200).end();
   } catch (e) {
     console.log(e);
