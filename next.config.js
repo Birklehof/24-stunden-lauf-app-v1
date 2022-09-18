@@ -7,6 +7,7 @@ module.exports = {
   env: {
     HOUSES: process.env.HOUSES,
     GRADES: process.env.GRADES,
-    METERS_PER_LAP: process.env.METERS_PER_LAP
+    METERS_PER_LAP: process.env.METERS_PER_LAP,
+    MIN_TIME_PER_LAP: process.env.MIN_TIME_PER_LAP
   }
 };

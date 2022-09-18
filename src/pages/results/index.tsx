@@ -21,7 +21,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend,
 
 const houseNames = process.env.HOUSES?.split(',') || ['Extern'];
 const gradeNames = process.env.GRADES?.split(',') || ['Keine Klasse'];
-const metersPerLap = parseInt(process.env.METERS_PER_LAP || '600');
+const metersPerLap = parseInt(process.env.METERS_PER_LAP || '660');
 
 interface RunnerWitLapsAndLapCount extends Runner {
   laps: Lap[];

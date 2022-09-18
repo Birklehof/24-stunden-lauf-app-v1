@@ -5,6 +5,7 @@ import middleware from '../middleware';
 import { getToken } from 'next-auth/jwt';
 
 const secret = process.env.NEXTAUTH_SECRET;
+const minTimePerLap = parseInt(process.env.MIN_TIME_PER_LAP || '120000');
 
 // POST /api/laps/create
 // Required fields in body: number
@@ -48,9 +49,18 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         }
       });
 
-      if (lastRound && new Date().getTime() - lastRound.runAt.getTime() < 1.5 * 60 * 1000) {
+      if (lastRound && new Date().getTime() - lastRound.runAt.getTime() < minTimePerLap) {
+        const timeLeft = minTimePerLap - (new Date().getTime() - lastRound.runAt.getTime());
+        const minutes = Math.floor(timeLeft / 1000 / 60);
+        const seconds = Math.floor((timeLeft - minutes * 1000 * 60) / 1000);
+        const secondsTwoDigits = seconds < 10 ? `0${seconds}` : seconds;
         return res.status(400).json({
-          error: 'Die letze Runde ist noch nicht lange genug (1:30 Minuten) her'
+          error:
+            'Die letze Runde ist noch nicht lange genug her (' +
+            minutes +
+            ':' +
+            secondsTwoDigits +
+            ' Minuten verbleibend)'
         });
       }
 
