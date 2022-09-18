@@ -30,10 +30,10 @@ export async function getServerSideProps(_context: any) {
   return { props: { runners } };
 }
 
-export default function IndexRunnerPage({ init_runners }: { init_runners: RunnerWithGroupAndLapsCount[] }) {
+export default function IndexRunnerPage({ initRunners }: { initRunners: RunnerWithGroupAndLapsCount[] }) {
   const { data: session, status } = useSession();
   const loading = status === 'loading';
-  const [runners, setRunners] = useState(init_runners);
+  const [runners, setRunners] = useState(initRunners);
   const { addToast } = useToasts();
 
   // Fetch users from protected route
@@ -132,6 +132,13 @@ export default function IndexRunnerPage({ init_runners }: { init_runners: Runner
                       </td>
                     </tr>
                   ))}
+                {runners?.length === 0 && (
+                  <tr>
+                    <td colSpan={6}>
+                      <p className="text-center text-gray-500">Keine Läufer vorhanden</p>
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

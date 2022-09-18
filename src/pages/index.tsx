@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import Router from 'next/router';
+import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { useToasts } from 'react-toast-notifications';
 import FullscreenLoadingSpinner from '../components/fullscreenLoadingSpinner';
@@ -8,6 +8,7 @@ import Layout from '../components/layout';
 export default function IndexPage() {
   const { data: session } = useSession();
   const { addToast } = useToasts();
+  const router = useRouter();
 
   useEffect(() => {
     const redirect = async () => {
@@ -19,15 +20,15 @@ export default function IndexPage() {
             appearance: 'info',
             autoDismiss: true
           });
-          await Router.push('/laps/create');
+          await router.push('/laps/create');
         } else if (role === 'superadmin') {
           addToast('Willkommen zurück' + (session?.user?.name ? ' ' + session?.user?.name : '') + '!', {
             appearance: 'info',
             autoDismiss: true
           });
-          await Router.push('/users');
+          await router.push('/users');
         } else {
-          await Router.push('/results');
+          await router.push('/results');
         }
       } else {
         addToast('Fehler bei der Authentifizierung', {
@@ -40,7 +41,7 @@ export default function IndexPage() {
     if (session) {
       redirect();
     } else {
-      Router.push('/results');
+      router.push('/results');
     }
   }, [addToast, session]);
 

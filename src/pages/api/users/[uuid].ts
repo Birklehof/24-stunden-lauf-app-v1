@@ -11,24 +11,24 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
     return res.status(403).end();
   }
 
-  const userUuid: string = req.query.uuid.toString();
+  const uuid: string = req.query.uuid.toString();
 
   if (req.method === 'GET') {
-    await handleGET(userUuid, res);
+    await handleGET(uuid, res);
   } else if (req.method === 'PATCH') {
-    await handlePATCH(userUuid, res, req);
+    await handlePATCH(uuid, res, req);
   } else if (req.method === 'DELETE') {
-    await handleDELETE(userUuid, res);
+    await handleDELETE(uuid, res);
   } else {
     return res.status(405).end();
   }
 }
 
 // GET /api/users/:uuid
-async function handleGET(userUuid: string, res: NextApiResponse) {
+async function handleGET(uuid: string, res: NextApiResponse) {
   try {
     const user = await prisma.user.findUnique({
-      where: { uuid: userUuid }
+      where: { uuid: uuid }
     });
 
     if (!user) {
@@ -42,10 +42,10 @@ async function handleGET(userUuid: string, res: NextApiResponse) {
 }
 
 // PATCH /api/users/:uuid
-async function handlePATCH(userUuid: string, res: NextApiResponse, req: NextApiRequest) {
+async function handlePATCH(uuid: string, res: NextApiResponse, req: NextApiRequest) {
   try {
     const user = await prisma.user.findUnique({
-      where: { uuid: userUuid }
+      where: { uuid: uuid }
     });
 
     if (!user) {
@@ -78,7 +78,7 @@ async function handlePATCH(userUuid: string, res: NextApiResponse, req: NextApiR
       }
 
       await prisma.user.update({
-        where: { uuid: userUuid },
+        where: { uuid: uuid },
         data: {
           name,
           email,
@@ -100,10 +100,10 @@ async function handlePATCH(userUuid: string, res: NextApiResponse, req: NextApiR
 }
 
 // DELETE /api/users/:uuid
-async function handleDELETE(userUuid: string, res: NextApiResponse) {
+async function handleDELETE(uuid: string, res: NextApiResponse) {
   try {
     const user = await prisma.user.findUnique({
-      where: { uuid: userUuid }
+      where: { uuid: uuid }
     });
 
     if (!user) {
@@ -111,7 +111,7 @@ async function handleDELETE(userUuid: string, res: NextApiResponse) {
     }
 
     await prisma.user.delete({
-      where: { uuid: userUuid }
+      where: { uuid: uuid }
     });
     return res.status(200).end();
   } catch (e) {

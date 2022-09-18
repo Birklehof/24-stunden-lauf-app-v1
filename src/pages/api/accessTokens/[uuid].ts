@@ -6,39 +6,34 @@ import { getToken } from 'next-auth/jwt';
 const secret = process.env.NEXTAUTH_SECRET;
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-  if (!(await middleware(await getToken({ req, secret }), ['helper', 'superadmin']))) {
+  if (!(await middleware(await getToken({ req, secret }), ['superadmin']))) {
     return res.status(403).end();
   }
 
-  const number: number = parseInt(req.query.number.toString());
+  const uuid: string = req.query.uuid.toString();
 
   if (req.method === 'DELETE') {
-    await handleDELETE(number, res);
+    await handleDELETE(uuid, res);
   } else {
     return res.status(405).end();
   }
 }
 
-// DELETE /api/runner/:number
-async function handleDELETE(number: number, res: NextApiResponse) {
+// DELETE /api/laps/:number
+async function handleDELETE(uuid: string, res: NextApiResponse) {
   try {
-    const runner = await prisma.runner.findUnique({
-      where: { number: number }
+    const accessToken = await prisma.accessToken.findUnique({
+      where: { uuid }
     });
 
-    if (!runner) {
+    if (!accessToken) {
       return res.status(404).end();
     }
 
-    await prisma.lap.deleteMany({
-      where: {
-        runnerNumber: runner.number
-      }
+    await prisma.accessToken.delete({
+      where: { uuid }
     });
 
-    await prisma.runner.delete({
-      where: { number: runner.number }
-    });
     return res.status(200).end();
   } catch (e) {
     console.log(e);

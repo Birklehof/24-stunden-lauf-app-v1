@@ -125,6 +125,13 @@ export default function Header() {
                   </li>
                 </>
               )}
+              {role == 'superadmin' && (
+                <li>
+                  <Link href={'/accessTokens'}>
+                    <a className="btn btn-sm btn-outline btn-primary rounded-full py-0 justify-start">Access Tokens</a>
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
         </div>
@@ -229,6 +236,13 @@ export default function Header() {
                 </ul>
               </li>
             )}
+            {role == 'superadmin' && (
+              <li>
+                <Link href={'/accessTokens'}>
+                  <a className="btn btn-sm btn-outline btn-primary mx-2 rounded-full py-0">Access Tokens</a>
+                </Link>
+              </li>
+            )}
           </ul>
         </div>
         <div className="navbar-end">
@@ -238,9 +252,9 @@ export default function Header() {
             </a>
           )}
           {!session && (
-            <Link href={'/auth/signin'} target={'_blank'}>
+            <Link href={'/api/auth/signin'} target={'_blank'}>
               <a className="btn btn-primary normal-case text-lg lg:btn-sm rounded-full lg:py-0">
-                <span style={{ color: '#004f49' }}>Anmelden</span>
+                <span>Anmelden</span>
               </a>
             </Link>
           )}

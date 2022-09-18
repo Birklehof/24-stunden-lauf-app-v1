@@ -5,24 +5,17 @@ import AccessDenied from '../../components/accessDenied';
 import { useToasts } from 'react-toast-notifications';
 import Link from 'next/link';
 
-const houseNames = process.env.HOUSES?.split(',') || ['Extern'];
-const gradeNames = process.env.GRADES?.split(',') || ['Keine Klasse'];
-
 export default function CreateRunnerPage() {
   const { data: session, status } = useSession();
   const loading = status === 'loading';
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [house, setHouse] = useState('Extern');
-  const [grade, setGrade] = useState('Keine Klasse');
   const [newNumber, setNewNumber] = useState(0);
   const { addToast } = useToasts();
 
   const resetForm = () => {
     setFirstName('');
     setLastName('');
-    setHouse('');
-    setGrade('');
     setNewNumber(0);
     document.getElementById('firstName')?.focus();
   };
@@ -32,9 +25,7 @@ export default function CreateRunnerPage() {
     try {
       const body = {
         firstName: firstName,
-        lastName: lastName,
-        house: house,
-        grade: grade
+        lastName: lastName
       };
       const res = await fetch(`/api/runners/create`, {
         method: 'POST',
@@ -85,7 +76,7 @@ export default function CreateRunnerPage() {
   if (typeof window !== 'undefined' && loading) return null;
 
   // If the user is not authenticated or does not have the correct role, display access denied message
-  if (!session || session.userRole !== 'superadmin') {
+  if (!session || (session.userRole !== 'helper' && session.userRole !== 'superadmin')) {
     return (
       <Layout>
         <AccessDenied />
@@ -135,45 +126,13 @@ export default function CreateRunnerPage() {
                 value={lastName}
                 required
               />
-              <label className="label">
-                <span className="label-text">Haus*</span>
-              </label>
-              <select
-                name={'house'}
-                className="select select-bordered w-full max-w-xs"
-                onChange={(e) => setHouse(e.target.value)}
-                value={house}
-                required
-              >
-                {houseNames.map((houseName) => (
-                  <option key={houseName} value={houseName}>
-                    {houseName}
-                  </option>
-                ))}
-              </select>
-              <label className="label">
-                <span className="label-text">Klasse</span>
-              </label>
-              <select
-                name={'garde'}
-                className="select select-bordered w-full max-w-xs"
-                onChange={(e) => setGrade(e.target.value)}
-                value={grade}
-                required
-              >
-                {gradeNames.map((gradeName) => (
-                  <option key={gradeName} value={gradeName}>
-                    {gradeName}
-                  </option>
-                ))}
-              </select>
               <div className="mt-4">
                 <div className="flex gap-y-2 w-full justify-evenly flex-col sm:flex-row">
                   <input
                     className="btn btn-primary"
                     type={'submit'}
                     value={'Hinzufügen'}
-                    disabled={!firstName || !lastName || !house || !grade}
+                    disabled={!firstName || !lastName}
                   />
                   <Link href={'/runners'}>
                     <a className={'btn btn-outline btn-error'}>Abbrechen</a>

@@ -14,22 +14,13 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
   }
 
   if (req.method === 'POST') {
-    const { firstName, lastName, house, grade } = req.body;
+    const { firstName, lastName } = req.body;
 
-    if (!firstName || !lastName || !house || !grade) {
+    if (!firstName || !lastName) {
       return res.status(400).json({
         error: 'Fehlende Angaben'
       });
-    } else if (house === 'Extern' && grade !== 'Keine Klasse') {
-      return res.status(400).json({
-        error: 'Widersprüchliche Angaben'
-      });
-    } else if (
-      typeof firstName !== 'string' ||
-      typeof lastName !== 'string' ||
-      typeof house !== 'string' ||
-      typeof grade !== 'string'
-    ) {
+    } else if (typeof firstName !== 'string' || typeof lastName !== 'string') {
       return res.status(400).json({
         error: 'Alle Angaben müssen Zeichenketten sein'
       });
@@ -40,9 +31,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
       newRunner = await prisma.runner.create({
         data: {
           firstName,
-          lastName,
-          house,
-          grade
+          lastName
         }
       });
       return res.status(200).json({

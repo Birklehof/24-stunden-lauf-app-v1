@@ -15,6 +15,16 @@ model User {
   name  String @unique
   email String @unique
   role  String @default("guest")
+  accessTokens AccessToken[]
+}
+
+model AccessToken {
+  uuid     String   @id @default(uuid())
+  token    String   @unique @default(uuid())
+  createdBy User     @relation(fields: [createdByUuid], references: [uuid])
+  createdByUuid String
+  createdAt DateTime @default(now())
+  lastUsedAt  DateTime @default(now())
 }
 
 model Runner {

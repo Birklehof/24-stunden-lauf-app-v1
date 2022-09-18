@@ -13,10 +13,10 @@ export async function getServerSideProps(_context: any) {
   return { props: { users } };
 }
 
-export default function IndexUserPage({ init_users }: { init_users: User[] }) {
+export default function IndexUserPage({ initUsers }: { initUsers: User[] }) {
   const { data: session, status } = useSession();
   const loading = status === 'loading';
-  const [users, setUsers] = useState(init_users);
+  const [users, setUsers] = useState(initUsers);
   const { addToast } = useToasts();
 
   // Fetch users from protected route
