@@ -89,10 +89,10 @@ const evaluateFile: (file: any) => Promise<boolean> = async (file: any) => {
       const values = line.replace(RegExp('[\\r\\n]'), '').split(RegExp('[;,]'));
       const runner = {
         studentNumber: +values[0],
-        firstName: values[2],
-        lastName: values[1],
-        grade: values[3],
-        house: values[4] ? values[4] : 'Extern (Schüler)'
+        firstName: values[2].trim(),
+        lastName: values[1].trim(),
+        grade: values[3].trim(),
+        house: values[4] ? values[4].trim() : 'Extern (Schüler)'
       };
       if (currentRunners.find((r) => r.studentNumber == runner.studentNumber)) {
         await prisma.runner.update({
