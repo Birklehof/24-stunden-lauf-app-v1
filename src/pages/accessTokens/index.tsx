@@ -17,6 +17,9 @@ export async function getServerSideProps(_context: any) {
   let accessTokens = await prisma.accessToken.findMany({
     include: {
       createdBy: true
+    },
+    orderBy: {
+      createdAt: 'desc'
     }
   });
   accessTokens = JSON.parse(JSON.stringify(accessTokens));
@@ -55,7 +58,7 @@ export default function IndexAccessTokensPage({ initAccessTokens }: { initAccess
     });
     if (res.status === 200) {
       const json = await res.json();
-      setAccessTokens([...accessTokens, json.data]);
+      setAccessTokens([json.data, ...accessTokens]);
       addToast('Access Token erfolgreich erstellt', {
         appearance: 'success',
         autoDismiss: true
@@ -126,28 +129,33 @@ export default function IndexAccessTokensPage({ initAccessTokens }: { initAccess
             <table className="table table-compact w-full">
               <thead>
                 <tr>
-                  <th></th>
                   <th>Token</th>
-                  <th>Erstellt</th>
                   <th>Erstellt von</th>
+                  <th>Erstellt</th>
                   <th>Zuletzt genutzt</th>
                   <th></th>
                 </tr>
               </thead>
               <tbody>
+                <tr>
+                  <td colSpan={6}>
+                    <p onClick={handleCreate} className="text-center text-primary cursor-pointer">
+                      {accessTokens?.length === 0 ? 'Erstes' : 'Weiteres'} Access Tokens hinzufügen
+                    </p>
+                  </td>
+                </tr>
                 {accessTokens &&
                   accessTokens.map((accessToken, index) => (
                     <tr key={accessToken.uuid}>
-                      <th>{index + 1}</th>
                       <td>{accessToken.token}</td>
-                      <td>
-                        {new Date(accessToken.createdAt).toLocaleDateString('de')}{' '}
-                        {new Date(accessToken.createdAt).toLocaleTimeString('de')}
-                      </td>
                       <td>{accessToken.createdBy?.name}</td>
                       <td>
                         {new Date(accessToken.createdAt).toLocaleDateString('de')}{' '}
                         {new Date(accessToken.createdAt).toLocaleTimeString('de')}
+                      </td>
+                      <td>
+                        {new Date(accessToken.lastUsedAt).toLocaleDateString('de')}{' '}
+                        {new Date(accessToken.lastUsedAt).toLocaleTimeString('de')}
                       </td>
                       <td>
                         <button className={'deleteButton'} onClick={() => handleDelete(accessToken.uuid)}>
@@ -156,13 +164,6 @@ export default function IndexAccessTokensPage({ initAccessTokens }: { initAccess
                       </td>
                     </tr>
                   ))}
-                <tr>
-                  <td colSpan={6}>
-                    <p onClick={handleCreate} className="text-center text-primary cursor-pointer">
-                      {accessTokens?.length === 0 ? 'Erstes' : 'Weiteres'} Access Tokens hinzufügen
-                    </p>
-                  </td>
-                </tr>
               </tbody>
             </table>
           </div>
