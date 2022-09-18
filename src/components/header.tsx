@@ -107,6 +107,15 @@ export default function Header() {
                       </a>
                     </Link>
                   </li>
+                  {role == 'superadmin' && (
+                    <li>
+                      <Link href={'/runners/import'}>
+                        <a className="btn btn-sm btn-ghost rounded-full py-0 justify-start ml-4">
+                          <span style={{ color: '#004f49' }}>Importieren</span>
+                        </a>
+                      </Link>
+                    </li>
+                  )}
                 </>
               )}
               {role == 'superadmin' && (
@@ -205,6 +214,13 @@ export default function Header() {
                       <a className="btn btn-sm btn-outline btn-primary rounded-full py-0">Hinzufügen</a>
                     </Link>
                   </li>
+                  {role == 'superadmin' && (
+                    <li>
+                      <Link href={'/runners/import'}>
+                        <a className="btn btn-sm btn-outline btn-primary rounded-full py-0">Importieren</a>
+                      </Link>
+                    </li>
+                  )}
                 </ul>
               </li>
             )}

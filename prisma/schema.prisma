@@ -29,6 +29,7 @@ model AccessToken {
 
 model Runner {
   number    Int     @id @default(autoincrement())
+  studentNumber Int? @unique
   firstName String
   lastName  String
   house     String @default("Extern")
