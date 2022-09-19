@@ -1,8 +1,8 @@
 {
-  "name": "birklehof-24h-run",
+  "name": "birklehof-24h-lauf",
   "version": "0.0.1",
   "private": true,
-  "description": "A small application for the 24h-run at the school Birklehof.",
+  "description": "A small application for the 24h-Lauf (Race) at the school Birklehof.",
   "repository": "https://github.com/C0mput3r5c13nt15t/birklehof-24h-lauf.git",
   "main": "",
   "scripts": {
