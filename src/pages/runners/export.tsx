@@ -3,7 +3,6 @@ import { useSession } from 'next-auth/react';
 import Layout from '../../components/layout';
 import AccessDenied from '../../components/accessDenied';
 import { CSVLink } from 'react-csv';
-import { useToasts } from 'react-toast-notifications';
 import { Runner } from '@prisma/client';
 import { prisma } from '../../../prisma';
 
@@ -55,28 +54,6 @@ export default function ExportRunnersPage({ runners }: { runners: Runner[] }) {
     headers: headers,
     filename: 'Birklehof_24h-Lauf_Teilnehmer_' + formattedDate + '.csv'
   };
-  const { addToast } = useToasts();
-
-  const handleExport = async () => {
-    await generateCSV(runners);
-  };
-
-  const generateCSV = async (runners: Runner[]) => {
-    if (runners.length > 0) {
-      // Click the download button to download the CSV file
-      document.getElementById('download-csv')?.click();
-
-      addToast(`Läufer als CSV-Datei heruntergeladen`, {
-        appearance: 'success',
-        autoDismiss: true
-      });
-    } else {
-      addToast('Keine Läufer', {
-        appearance: 'info',
-        autoDismiss: true
-      });
-    }
-  };
 
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== 'undefined' && loading) return null;
@@ -95,10 +72,9 @@ export default function ExportRunnersPage({ runners }: { runners: Runner[] }) {
       <div className="card w-96 bg-base-100 shadow-xl">
         <div className="card-body">
           <h2 className="card-title">Teilnehmerliste herunterladen</h2>
-          <input type={'button'} onClick={handleExport} value={'Herunterladen'} className="btn btn-primary" />
           {data?.length > 0 ? (
             <CSVLink id={'download-csv'} {...csvReport} className="btn btn-primary">
-              Erneut herunterladen
+              Herunterladen
             </CSVLink>
           ) : null}
         </div>
