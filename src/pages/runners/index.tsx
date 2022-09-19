@@ -6,7 +6,7 @@ import { prisma } from '../../../prisma';
 import { Runner, Lap } from '@prisma/client';
 import { IoTrashOutline } from 'react-icons/io5';
 import { useToasts } from 'react-toast-notifications';
-import isAuthenticated from '../middleware';
+import isAuthenticated from '../../lib/middleware';
 
 interface RunnerWithGroupAndLapsCount extends Runner {
   _count: {

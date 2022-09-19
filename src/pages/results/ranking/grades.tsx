@@ -6,6 +6,7 @@ import { Runner } from '@prisma/client';
 import style from '../../../styles/results-scoreboard.module.css';
 
 const gradeNames = process.env.GRADES?.split(',') || [''];
+const timezoneHoursOffset = parseInt(process.env.TIMEZONE_HOURS_OFFSET || '0');
 
 interface RunnerWithLapCount extends Runner {
   _count: {
@@ -13,7 +14,7 @@ interface RunnerWithLapCount extends Runner {
   };
 }
 
-export async function getServerSideProps(_context: any) {
+export async function getStaticProps(_context: any) {
   let runners = await prisma.runner.findMany({
     include: {
       _count: {
@@ -24,10 +25,19 @@ export async function getServerSideProps(_context: any) {
     }
   });
   runners = JSON.parse(JSON.stringify(runners));
-  return { props: { runners } };
+  let currentDate = new Date();
+  currentDate.setHours(currentDate.getHours() + timezoneHoursOffset);
+  const formattedCurrentDate = currentDate.toLocaleDateString('de') + ' ' + currentDate.toLocaleTimeString('de');
+  return { props: { runners, formattedCurrentDate }, revalidate: 60 };
 }
 
-export default function GroupsPage({ runners }: { runners: RunnerWithLapCount[] }) {
+export default function GroupsPage({
+  runners,
+  formattedCurrentDate
+}: {
+  runners: RunnerWithLapCount[];
+  formattedCurrentDate: string;
+}) {
   const { status } = useSession();
   const loading = status === 'loading';
   const [expandGrade, setExpandGrade] = useState<number | null>(null);
@@ -136,6 +146,7 @@ export default function GroupsPage({ runners }: { runners: RunnerWithLapCount[] 
             ))}
         </div>
       </div>
+      <p className="mt-4 mb-4">Stand: {formattedCurrentDate}</p>
     </Layout>
   );
 }

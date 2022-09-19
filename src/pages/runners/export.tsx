@@ -17,17 +17,27 @@ interface csvReport {
   filename: string;
 }
 
+interface RunnerWithShowedUp extends Runner {
+  showedUp: boolean;
+}
+
 export async function getServerSideProps(_context: any) {
   let runners = await prisma.runner.findMany({
     orderBy: {
       number: 'asc'
     }
   });
+  runners = runners.map((runner) => {
+    return {
+      ...runner,
+      showedUp: false
+    };
+  });
   runners = JSON.parse(JSON.stringify(runners));
   return { props: { runners } };
 }
 
-export default function ExportRunnersPage({ runners }: { runners: Runner[] }) {
+export default function ExportRunnersPage({ runners }: { runners: RunnerWithShowedUp[] }) {
   const { data: session, status } = useSession();
   const [data, setData]: any = useState(runners);
   const loading = status === 'loading';
@@ -38,9 +48,8 @@ export default function ExportRunnersPage({ runners }: { runners: Runner[] }) {
   const headers: Header[] = [
     { label: 'Vorname', key: 'firstName' },
     { label: 'Nachname', key: 'lastName' },
-    { label: 'Klasse', key: 'grade' },
-    { label: 'Haus', key: 'house' },
-    { label: 'Startnummer', key: 'number' }
+    { label: 'Startnummer', key: 'number' },
+    { label: 'Anwesend', key: 'showedUp' }
   ];
   const csvReport: csvReport = {
     data: data,

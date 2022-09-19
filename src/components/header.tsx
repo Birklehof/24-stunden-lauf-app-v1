@@ -36,7 +36,7 @@ export default function Header() {
       <div className="navbar bg-secondary z-[100]">
         <div className="navbar-start hidden lg:flex">
           <Link href={'/'}>
-            <a className="btn btn-ghost normal-case text-lg">
+            <a className="btn btn-ghost normal-case text-lg lg:btn-sm rounded-full lg:py-0">
               <span style={{ color: '#004f49' }}>Birklehof 24h-Lauf</span>
             </a>
           </Link>

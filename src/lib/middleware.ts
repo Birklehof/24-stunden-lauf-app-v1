@@ -6,5 +6,5 @@ export default async function isAuthenticated(session: Session | null, allowedRo
     return false;
   }
   const { userRole } = session;
-  return allowedRoles.includes(userRole);
+  return allowedRoles?.includes(userRole);
 }

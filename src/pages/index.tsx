@@ -43,7 +43,7 @@ export default function IndexPage() {
     } else {
       router.push('/results');
     }
-  }, [addToast, session]);
+  }, [router, addToast, session]);
 
   return (
     <Layout>

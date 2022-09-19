@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 import AccessDenied from '../../components/accessDenied';
 import { useToasts } from 'react-toast-notifications';
 import Link from 'next/link';
-import isAuthenticated from '../middleware';
+import isAuthenticated from '../../lib/middleware';
 
 export default function CreateRunnerPage() {
   const { data: session, status } = useSession();

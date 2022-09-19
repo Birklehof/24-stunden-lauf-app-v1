@@ -7,7 +7,7 @@ import { User } from '@prisma/client';
 import { IoCreateOutline, IoTrashOutline } from 'react-icons/io5';
 import { useToasts } from 'react-toast-notifications';
 import Link from 'next/link';
-import isAuthenticated from '../middleware';
+import isAuthenticated from '../../lib/middleware';
 
 export async function getServerSideProps(_context: any) {
   const users = await prisma.user.findMany();

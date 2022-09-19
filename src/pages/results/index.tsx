@@ -22,6 +22,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend,
 const houseNames = process.env.HOUSES?.split(',') || [''];
 const gradeNames = process.env.GRADES?.split(',') || [''];
 const metersPerLap = parseInt(process.env.METERS_PER_LAP || '660');
+const timezoneHoursOffset = parseInt(process.env.TIMEZONE_HOURS_OFFSET || '0');
 
 interface RunnerWitLapsAndLapCount extends Runner {
   laps: Lap[];
@@ -30,7 +31,7 @@ interface RunnerWitLapsAndLapCount extends Runner {
   };
 }
 
-export async function getServerSideProps(_context: any) {
+export async function getStaticProps(_context: any) {
   let runners = await prisma.runner.findMany({
     include: {
       laps: true,
@@ -58,10 +59,21 @@ export async function getServerSideProps(_context: any) {
   });
   runners = JSON.parse(JSON.stringify(runners));
   firstLap = JSON.parse(JSON.stringify(firstLap));
-  return { props: { runners, firstLap } };
+  let currentDate = new Date();
+  currentDate.setHours(currentDate.getHours() + timezoneHoursOffset);
+  const formattedCurrentDate = currentDate.toLocaleDateString('de') + ' ' + currentDate.toLocaleTimeString('de');
+  return { props: { runners, firstLap, formattedCurrentDate }, revalidate: 60 };
 }
 
-export default function GeneralPage({ runners, firstLap }: { runners: RunnerWitLapsAndLapCount[]; firstLap: Lap }) {
+export default function GeneralPage({
+  runners,
+  firstLap,
+  formattedCurrentDate
+}: {
+  runners: RunnerWitLapsAndLapCount[];
+  firstLap: Lap;
+  formattedCurrentDate: string;
+}) {
   const { status } = useSession();
   const loading = status === 'loading';
 
@@ -380,6 +392,7 @@ export default function GeneralPage({ runners, firstLap }: { runners: RunnerWitL
           </div>
         </div>
       </div>
+      <p className="mt-4 mb-4">Stand: {formattedCurrentDate}</p>
     </Layout>
   );
 }

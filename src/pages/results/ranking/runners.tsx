@@ -11,7 +11,9 @@ interface RunnerWithLapCount extends Runner {
   };
 }
 
-export async function getServerSideProps(_context: any) {
+const timezoneHoursOffset = parseInt(process.env.TIMEZONE_HOURS_OFFSET || '0');
+
+export async function getStaticProps(_context: any) {
   let runners = await prisma.runner.findMany({
     include: {
       _count: {
@@ -35,10 +37,19 @@ export async function getServerSideProps(_context: any) {
     ]
   });
   runners = JSON.parse(JSON.stringify(runners));
-  return { props: { runners } };
+  let currentDate = new Date();
+  currentDate.setHours(currentDate.getHours() + timezoneHoursOffset);
+  const formattedCurrentDate = currentDate.toLocaleDateString('de') + ' ' + currentDate.toLocaleTimeString('de');
+  return { props: { runners, formattedCurrentDate }, revalidate: 60 };
 }
 
-export default function LeaderbordPage({ runners }: { runners: RunnerWithLapCount[] }) {
+export default function LeaderbordPage({
+  runners,
+  formattedCurrentDate
+}: {
+  runners: RunnerWithLapCount[];
+  formattedCurrentDate: string;
+}) {
   const { status } = useSession();
   const loading = status === 'loading';
 
@@ -89,7 +100,10 @@ export default function LeaderbordPage({ runners }: { runners: RunnerWithLapCoun
         <div className="w-11/12 max-w-4xl flex flex-col gap-2">
           {runners &&
             runners.slice(3).map((runner: RunnerWithLapCount, index: number) => (
-              <div key={index} className="shadow-md rounded-full flex flex-row items-center justify-between p-1">
+              <div
+                key={index}
+                className="bg-white shadow-md rounded-full flex flex-row items-center justify-between p-1"
+              >
                 <a className="btn btn-circle btn-outline btn-primary">{index + 3}</a>
                 <div>
                   {runner.firstName} {runner.lastName} ({runner.number})
@@ -101,6 +115,7 @@ export default function LeaderbordPage({ runners }: { runners: RunnerWithLapCoun
             ))}
         </div>
       </div>
+      <p className="mt-4 mb-4">Stand: {formattedCurrentDate}</p>
     </Layout>
   );
 }

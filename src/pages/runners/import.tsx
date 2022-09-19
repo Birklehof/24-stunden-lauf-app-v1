@@ -4,7 +4,7 @@ import Router from 'next/router';
 import AccessDenied from '../../components/accessDenied';
 import { useSession } from 'next-auth/react';
 import { useToasts } from 'react-toast-notifications';
-import isAuthenticated from '../middleware';
+import isAuthenticated from '../../lib/middleware';
 
 export default function ImportProductsPage() {
   const { data: session, status } = useSession();
