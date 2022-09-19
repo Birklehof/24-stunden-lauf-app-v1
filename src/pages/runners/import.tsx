@@ -88,7 +88,7 @@ export default function ImportProductsPage() {
     <Layout>
       <div className="card w-96 bg-base-100 shadow-xl">
         <div className="card-body">
-          <h2 className="card-title">Läufer importieren</h2>
+          <h2 className="card-title">Schüler importieren</h2>
           {file ? <p>{file.name}</p> : <p>Keine Datei ausgewählt</p>}
           <label htmlFor="filePicker" className="btn btn-primary">
             Schülerliste auswählen

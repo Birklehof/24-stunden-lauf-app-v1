@@ -84,6 +84,15 @@ export default function Header() {
                   </a>
                 </Link>
               </li>
+              {role == 'superadmin' && (
+                <li>
+                  <Link href={'/results/export'}>
+                    <a className="btn btn-sm btn-ghost rounded-full py-0 justify-start ml-4">
+                      <span style={{ color: '#004f49' }}>Exportieren</span>
+                    </a>
+                  </Link>
+                </li>
+              )}
               {(role === 'helper' || role == 'superadmin') && (
                 <li>
                   <Link href={'/laps/create'}>
@@ -189,6 +198,13 @@ export default function Header() {
                     <a className="btn btn-sm btn-outline btn-primary rounded-full py-0">Rangliste Häuser</a>
                   </Link>
                 </li>
+                {role == 'superadmin' && (
+                  <li>
+                    <Link href={'/results/export'}>
+                      <a className="btn btn-sm btn-outline btn-primary rounded-full py-0">Exportieren</a>
+                    </Link>
+                  </li>
+                )}
               </ul>
             </li>
             {(role === 'helper' || role == 'superadmin') && (

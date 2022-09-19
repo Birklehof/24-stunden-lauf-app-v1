@@ -19,8 +19,15 @@ interface csvReport {
 
 export async function getServerSideProps(_context: any) {
   let runners = await prisma.runner.findMany({
+    include: {
+      _count: {
+        select: {
+          laps: true
+        }
+      }
+    },
     orderBy: {
-      number: 'asc'
+      lastName: 'asc'
     }
   });
   runners = JSON.parse(JSON.stringify(runners));
@@ -36,16 +43,17 @@ export default function ExportRunnersPage({ runners }: { runners: Runner[] }) {
     currentDate.getMonth() + 1
   }-${currentDate.getDate()}_${currentDate.getHours()}${currentDate.getMinutes()}${currentDate.getSeconds()}`;
   const headers: Header[] = [
+    { label: 'Startnummer', key: 'number' },
     { label: 'Vorname', key: 'firstName' },
     { label: 'Nachname', key: 'lastName' },
     { label: 'Klasse', key: 'grade' },
     { label: 'Haus', key: 'house' },
-    { label: 'Startnummer', key: 'number' }
+    { label: 'Runden', key: '_count.laps' }
   ];
   const csvReport: csvReport = {
     data: data,
     headers: headers,
-    filename: 'Birklehof_24h-Lauf_Teilnehmer_' + formattedDate + '.csv'
+    filename: 'Birklehof_24h-Lauf_Ergebnisse_' + formattedDate + '.csv'
   };
 
   // When rendering client side don't display anything until loading is complete
@@ -64,7 +72,7 @@ export default function ExportRunnersPage({ runners }: { runners: Runner[] }) {
     <Layout>
       <div className="card w-96 bg-base-100 shadow-xl">
         <div className="card-body">
-          <h2 className="card-title">Teilnehmerliste herunterladen</h2>
+          <h2 className="card-title">Ergebnisse herunterladen</h2>
           {data?.length > 0 ? (
             <CSVLink id={'download-csv'} {...csvReport} className="btn btn-primary">
               Herunterladen

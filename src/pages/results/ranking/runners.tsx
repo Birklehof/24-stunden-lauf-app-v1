@@ -27,7 +27,10 @@ export async function getServerSideProps(_context: any) {
         }
       },
       {
-        number: 'desc'
+        lastName: 'asc'
+      },
+      {
+        firstName: 'asc'
       }
     ]
   });
