@@ -19,8 +19,8 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement);
 
-const houseNames = process.env.HOUSES?.split(',') || ['Extern'];
-const gradeNames = process.env.GRADES?.split(',') || ['Keine Klasse'];
+const houseNames = process.env.HOUSES?.split(',') || [''];
+const gradeNames = process.env.GRADES?.split(',') || [''];
 const metersPerLap = parseInt(process.env.METERS_PER_LAP || '660');
 
 interface RunnerWitLapsAndLapCount extends Runner {

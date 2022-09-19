@@ -32,7 +32,7 @@ model Runner {
   studentNumber Int? @unique
   firstName String
   lastName  String
-  house     String @default("Extern")
+  house     String @default("Extern (Kollegium)")
   grade     String @default("Keine Klasse")
   laps      Lap[]
 }

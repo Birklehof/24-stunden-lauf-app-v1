@@ -5,7 +5,7 @@ import { prisma } from '../../../../prisma';
 import { Runner } from '@prisma/client';
 import style from '../../../styles/results-scoreboard.module.css';
 
-const houseNames = process.env.HOUSES?.split(',') || ['Extern'];
+const houseNames = process.env.HOUSES?.split(',') || [''];
 
 interface RunnerWithLapCount extends Runner {
   _count: {
