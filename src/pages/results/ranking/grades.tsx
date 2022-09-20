@@ -3,7 +3,6 @@ import { useSession } from 'next-auth/react';
 import Layout from '../../../components/layout';
 import { prisma } from '../../../../prisma';
 import { Runner } from '@prisma/client';
-import rankingStyle from '../../../styles/ranking.module.css';
 
 const gradeNames = process.env.GRADES?.split(',') || [''];
 const timezoneHoursOffset = parseInt(process.env.TIMEZONE_HOURS_OFFSET || '0');
@@ -40,7 +39,6 @@ export default function GroupsPage({
 }) {
   const { status } = useSession();
   const loading = status === 'loading';
-  const [expandGrade, setExpandGrade] = useState<number | null>(null);
 
   const grades = gradeNames.map((name) => {
     return {
@@ -77,73 +75,61 @@ export default function GroupsPage({
 
   return (
     <Layout>
-      <div className={rankingStyle.leaderboard}>
-        <div className="w-11/12 max-w-4xl flex flex-col gap-4">
-          {grades &&
-            grades.map((grade, index: number) => (
-              <div key={index}>
-                <div
-                  className="bg-white shadow-md rounded-full flex flex-row items-center justify-between p-1 cursor-pointer"
-                  onClick={() => {
-                    if (expandGrade === index) {
-                      setExpandGrade(null);
-                    } else {
-                      setExpandGrade(index);
-                    }
-                  }}
-                >
-                  <a className="btn btn-circle btn-outline btn-primary">{index + 1}</a>
-                  <div>
-                    {grade.name} ({grade._count.runners})
-                  </div>
-                  <div className="btn btn-ghost rounded-full">
-                    {grade._count.laps} {grade._count.laps === 1 ? 'Runde' : 'Runden'}
-                  </div>
-                </div>
-                <div
-                  className={`card w-full bg-base-100 shadow-md mt-2 transition-transform	${
-                    expandGrade === index ? 'scale-y-100 h-full' : 'scale-y-0 h-0'
-                  }`}
-                >
-                  {runners && (
-                    <div className="overflow-x-auto">
-                      <table className="table table-compact w-full">
-                        <thead>
-                          <tr>
-                            <th> Nr.</th>
-                            <th>Name</th>
-                            <th>Runden</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {runners
-                            .filter((runner) => runner.grade === grade.name)
-                            .sort((a, b) => {
-                              if (a._count.laps > b._count.laps) {
-                                return -1;
-                              }
-                              if (a._count.laps < b._count.laps) {
-                                return 1;
-                              }
-                              return 0;
-                            })
-                            .map((runner, index: number) => (
-                              <tr key={index}>
-                                <td>{runner.number}</td>
-                                <td>
-                                  {runner.firstName} {runner.lastName}
-                                </td>
-                                <td>{runner._count.laps}</td>
-                              </tr>
-                            ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
+      <div className="w-11/12 max-w-lg flex flex-col gap-4">
+        {grades &&
+          grades.map((grade, index: number) => (
+            <div id={`collapse-${index}`} key={index} tabIndex={0} className="collapse">
+              <div className="collapse-title bg-white shadow-md rounded-full w-full mb-2 flex flex-row justify-between items-center p-1">
+                <a className="btn btn-circle btn-outline btn-primary">{index + 1}</a>
+                {grade.name} ({grade._count.runners}){' '}
+                <div className="font-bold px-4">
+                  {grade._count.laps}{' '}
+                  <span className="hidden sm:inline">{grade._count.laps === 1 ? 'Runde' : 'Runden'}</span>
                 </div>
               </div>
-            ))}
-        </div>
+              <div tabIndex={0} className="collapse-content">
+                <div className="card bg-white shadow-md">
+                  <div className="card-body p-0">
+                    {runners && (
+                      <div style={{ maxHeight: '50vh' }} className={`overflow-x-auto overflow-y-auto`}>
+                        <table className="table table-compact w-full">
+                          <thead>
+                            <tr>
+                              <th> Nr.</th>
+                              <th>Name</th>
+                              <th>Runden</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {runners
+                              .filter((runner) => runner.grade === grade.name)
+                              .sort((a, b) => {
+                                if (a._count.laps > b._count.laps) {
+                                  return -1;
+                                }
+                                if (a._count.laps < b._count.laps) {
+                                  return 1;
+                                }
+                                return 0;
+                              })
+                              .map((runner, index: number) => (
+                                <tr key={index}>
+                                  <td>{runner.number}</td>
+                                  <td>
+                                    {runner.firstName} {runner.lastName}
+                                  </td>
+                                  <td>{runner._count.laps}</td>
+                                </tr>
+                              ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
       </div>
       <p className="mt-4 mb-4">Stand: {formattedCurrentDate}</p>
     </Layout>

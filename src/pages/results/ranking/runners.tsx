@@ -3,7 +3,6 @@ import { useSession } from 'next-auth/react';
 import Layout from '../../../components/layout';
 import { prisma } from '../../../../prisma';
 import { Runner } from '@prisma/client';
-import rankingStyle from '../../../styles/ranking.module.css';
 
 interface RunnerWithLapCount extends Runner {
   _count: {
@@ -77,42 +76,46 @@ export default function LeaderbordPage({
 
   return (
     <Layout>
-      <div className={rankingStyle.leaderboard}>
-        <div className="w-11/12 max-w-4xl flex flex-col justify-between items-center my-6 gap-2">
-          {runners &&
-            [runners[0], runners[1], runners[2]].map((runner: RunnerWithLapCount, index: number) => (
-              <div
-                key={index}
-                className="w-full stats grow shadow-lg first:h-44 first:z-20 z-10 last:z-0 h-36 last:h-32 text-[#d4af37] first:text-[#c0c0c0] last:text-[#bf8970] mt-[-20px]"
-              >
-                <div className="stat place-items-center">
-                  <div className="stat-title text-black">
+      <div className="w-11/12 max-w-lg">
+        <div className="flex flex-col w-full">
+          <div className="flex flex-col gap-4">
+            {runners &&
+              [runners[0], runners[1], runners[2]].map((runner: RunnerWithLapCount, index: number) => (
+                <div
+                  key={index}
+                  className="w-full stats grow shadow-lg first:h-40 first:z-36 z-10 last:z-0 h-32 last:h-28 text-[#d4af37] first:text-[#c0c0c0] last:text-[#bf8970]"
+                >
+                  <div className="stat place-items-center">
+                    <div className="stat-title text-black">
+                      {runner.firstName} {runner.lastName} ({runner.number})
+                    </div>
+                    <div className="stat-value">{runners.indexOf(runner) + 1}</div>
+                    <div className="stat-desc text-black">
+                      {runner._count.laps} {runner._count.laps === 1 ? 'Runde' : 'Runden'}
+                    </div>
+                  </div>
+                </div>
+              ))}
+          </div>
+          <div className="divider"></div>
+          <div className="flex flex-col">
+            {runners &&
+              runners.slice(3).map((runner: RunnerWithLapCount, index: number) => (
+                <div
+                  key={index}
+                  className="bg-white shadow-md rounded-full w-full mb-2 flex flex-row justify-between items-center p-1"
+                >
+                  <a className="btn btn-circle btn-outline btn-primary cursor-default">{index + 4}</a>
+                  <div>
                     {runner.firstName} {runner.lastName} ({runner.number})
                   </div>
-                  <div className="stat-value">{runners.indexOf(runner) + 1}</div>
-                  <div className="stat-desc text-black">
-                    {runner._count.laps} {runner._count.laps === 1 ? 'Runde' : 'Runden'}
+                  <div className="font-bold px-4">
+                    {runner._count.laps}{' '}
+                    <span className="hidden sm:inline">{runner._count.laps === 1 ? 'Runde' : 'Runden'}</span>
                   </div>
                 </div>
-              </div>
-            ))}
-        </div>
-        <div className="w-11/12 max-w-4xl flex flex-col gap-2">
-          {runners &&
-            runners.slice(3).map((runner: RunnerWithLapCount, index: number) => (
-              <div
-                key={index}
-                className="bg-white shadow-md rounded-full flex flex-row items-center justify-between p-1"
-              >
-                <a className="btn btn-circle btn-outline btn-primary">{index + 3}</a>
-                <div>
-                  {runner.firstName} {runner.lastName} ({runner.number})
-                </div>
-                <div className="btn btn-ghost rounded-full">
-                  {runner._count.laps} {runner._count.laps === 1 ? 'Runde' : 'Runden'}
-                </div>
-              </div>
-            ))}
+              ))}
+          </div>
         </div>
       </div>
       <p className="mt-4 mb-4">Stand: {formattedCurrentDate}</p>
