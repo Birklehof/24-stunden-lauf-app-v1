@@ -32,17 +32,25 @@ async function handleDELETE(number: number, res: NextApiResponse) {
       });
     }
 
-    const laps = await prisma.lap.deleteMany({
+    const lap = await prisma.lap.findFirst({
       where: {
         runnerNumber: runner.number
+      },
+      orderBy: {
+        runAt: 'desc'
       }
     });
 
-    if (laps.count === 0) {
+    if (!lap) {
       return res.status(400).json({
         error: 'Der Läufer hat keine Runden'
       });
     }
+
+    await prisma.lap.delete({
+      where: { uuid: lap.uuid }
+    });
+
     return res.status(200).end();
   } catch (e) {
     console.log(e);

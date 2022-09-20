@@ -232,7 +232,7 @@ export default function GeneralPage({
                   labels: houses.map((house) => house.name),
                   datasets: [
                     {
-                      label: 'Runden pro Gruppe',
+                      label: 'Runden pro Haus',
                       data: houses.map((house) => house._count.laps),
                       backgroundColor: houses.map((house) => addAlpha(house.color, 0.2)),
                       borderColor: houses.map((house) => house.color),
@@ -258,7 +258,7 @@ export default function GeneralPage({
                   labels: houses.map((house) => house.name),
                   datasets: [
                     {
-                      label: 'Runden pro Gruppe',
+                      label: 'Runden pro Haus',
                       data: houses.map((house) => house._count.laps),
                       backgroundColor: houses.map((house) => addAlpha(house.color, 0.2)),
                       borderColor: houses.map((house) => house.color),
@@ -282,7 +282,7 @@ export default function GeneralPage({
                   labels: houses.map((house) => house.name),
                   datasets: [
                     {
-                      label: 'Ø Runden pro Haus',
+                      label: 'Ø Runden pro Haus pro Person',
                       data: houses.map((house) => house.averageLaps),
                       backgroundColor: houses.map((house) => addAlpha(house.color, 0.2)),
                       borderColor: houses.map((house) => house.color),
@@ -342,7 +342,7 @@ export default function GeneralPage({
                   labels: grades.map((grade) => grade.name),
                   datasets: [
                     {
-                      label: 'Runden pro Gruppe',
+                      label: 'Runden pro Klasse',
                       data: grades.map((grade) => grade._count.laps),
                       backgroundColor: grades.map((grade) => addAlpha(grade.color, 0.2)),
                       borderColor: grades.map((grade) => grade.color),
@@ -366,7 +366,7 @@ export default function GeneralPage({
                   labels: grades.map((grade) => grade.name),
                   datasets: [
                     {
-                      label: 'Ø Runden pro Haus',
+                      label: 'Ø Runden pro Klasse pro Person',
                       data: grades.map((grade) => grade.averageLaps),
                       backgroundColor: grades.map((grade) => addAlpha(grade.color, 0.2)),
                       borderColor: grades.map((grade) => grade.color),

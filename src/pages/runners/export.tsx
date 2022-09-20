@@ -30,7 +30,7 @@ export async function getServerSideProps(_context: any) {
   runners = runners.map((runner) => {
     return {
       ...runner,
-      showedUp: false
+      showedUp: ''
     };
   });
   runners = JSON.parse(JSON.stringify(runners));
