@@ -4,15 +4,15 @@ import { useSession } from 'next-auth/react';
 import AccessDenied from '../../components/accessDenied';
 import { useToasts } from 'react-toast-notifications';
 import Link from 'next/link';
-import isAuthenticated from '../../lib/middleware';
+import isAuthenticated from '../../lib/middleware/sessionBased';
 
-export default function CreateLapPage() {
+export default function CreateLapsPage() {
   const { data: session, status } = useSession();
   const loading = status === 'loading';
   const [number, setNumber] = useState(0);
   const { addToast } = useToasts();
 
-  const submitData = async (e: React.SyntheticEvent) => {
+  const handleCreate = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     try {
       const body = { number };
@@ -77,7 +77,7 @@ export default function CreateLapPage() {
       <div className="card w-11/12 max-w-sm bg-base-100 shadow-xl">
         <div className="card-body">
           <h2 className="card-title">Runde erfassen</h2>
-          <form onSubmit={submitData}>
+          <form onSubmit={handleCreate}>
             <input
               name={'number'}
               className="box-border input input-bordered w-full max-w-xs text-center text-6xl p-12 font-['Roboto_Slab'] tracking-widest"

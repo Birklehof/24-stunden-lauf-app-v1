@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 import AccessDenied from '../../components/accessDenied';
 import { useToasts } from 'react-toast-notifications';
 import Link from 'next/link';
-import isAuthenticated from '../../lib/middleware';
+import isAuthenticated from '../../lib/middleware/sessionBased';
 
 export default function DeleteLapPage() {
   const { data: session, status } = useSession();
@@ -12,7 +12,7 @@ export default function DeleteLapPage() {
   const [number, setNumber] = useState(0);
   const { addToast } = useToasts();
 
-  const submitData = async (e: React.SyntheticEvent) => {
+  const handleDelete = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     try {
       const body = { number };
@@ -96,7 +96,7 @@ export default function DeleteLapPage() {
               </span>
             </div>
           </div>
-          <form onSubmit={submitData}>
+          <form onSubmit={handleDelete}>
             <input
               name={'number'}
               className="box-border input input-bordered w-full max-w-xs text-center text-6xl p-12 font-['Roboto_Slab'] tracking-widest"

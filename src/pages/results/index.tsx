@@ -52,54 +52,46 @@ export async function getStaticProps(_context: any) {
       }
     ]
   });
-  let firstLap = await prisma.lap.findFirst({
+  let laps = await prisma.lap.findMany({
     orderBy: {
       runAt: 'asc'
     }
   });
   runners = JSON.parse(JSON.stringify(runners));
-  firstLap = JSON.parse(JSON.stringify(firstLap));
+  laps = JSON.parse(JSON.stringify(laps));
   let currentDate = new Date();
   currentDate.setHours(currentDate.getHours() + timezoneHoursOffset);
   const formattedCurrentDate = currentDate.toLocaleDateString('de') + ' ' + currentDate.toLocaleTimeString('de');
-  return { props: { runners, firstLap, formattedCurrentDate }, revalidate: 60 };
+  return { props: { runners, laps, formattedCurrentDate }, revalidate: 60 };
 }
 
 export default function GeneralPage({
   runners,
-  firstLap,
+  laps,
   formattedCurrentDate
 }: {
   runners: RunnerWitLapsAndLapCount[];
-  firstLap: Lap;
+  laps: Lap[];
   formattedCurrentDate: string;
 }) {
   const { status } = useSession();
   const loading = status === 'loading';
+  const currentTime = new Date().getTime();
 
   let hoursSinceFirstLap = 0;
-  if (firstLap) {
-    hoursSinceFirstLap = Math.floor((Date.now() - new Date(firstLap.runAt).getTime()) / 1000 / 60 / 60);
+  if (laps?.length > 0) {
+    hoursSinceFirstLap = Math.ceil((currentTime - new Date(laps[0].runAt).getTime()) / 1000 / 60 / 60);
   }
-  hoursSinceFirstLap = hoursSinceFirstLap < 2 ? 2 : hoursSinceFirstLap;
   const totalLapsInEachHourSinceFirstLap = Array.from({ length: hoursSinceFirstLap }, (_, i) => {
-    const hour: number = i + 1;
-    const lapsInHour = runners.reduce((acc, runner) => {
-      const lapsInHour = runner.laps.filter((lap) => {
-        const lapHour = Math.floor(
-          (new Date(lap.runAt).getTime() - new Date(runners[0].laps[0].runAt).getTime()) / 1000 / 60 / 60
-        );
-        return lapHour <= hour;
-      });
-      return acc + lapsInHour.length;
-    }, 0);
-    return lapsInHour;
+    return laps.filter((lap) => {
+      return Math.floor(hoursSinceFirstLap - (currentTime - new Date(lap.runAt).getTime()) / 1000 / 60 / 60) <= i;
+    }).length;
   });
   const hours = Array.from({ length: 24 }, (_, i) => i);
   const lapsPerHour = hours.map((hour) => {
-    return runners.reduce((acc, runner) => {
-      return acc + runner.laps.filter((lap) => new Date(lap.runAt).getHours() === hour).length;
-    }, 0);
+    return laps.filter((lap) => {
+      return Math.round(new Date(lap.runAt).getHours()) === hour;
+    }).length;
   });
   const averageLapsPerRunner =
     runners.reduce((acc, runner) => {
@@ -192,6 +184,13 @@ export default function GeneralPage({
                     tension: 0.5
                   }
                 ]
+              }}
+              options={{
+                scales: {
+                  y: {
+                    beginAtZero: true
+                  }
+                }
               }}
             />
           </div>

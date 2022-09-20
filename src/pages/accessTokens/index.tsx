@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Layout from '../../components/layout';
 import AccessDenied from '../../components/accessDenied';
-import { prisma } from '../../../prisma';
 import { AccessToken } from '@prisma/client';
 import { IoTrashOutline } from 'react-icons/io5';
 import { useToasts } from 'react-toast-notifications';
@@ -13,26 +12,12 @@ interface AccessTokenWithCreatedBy extends AccessToken {
   };
 }
 
-export async function getServerSideProps(_context: any) {
-  let accessTokens = await prisma.accessToken.findMany({
-    include: {
-      createdBy: true
-    },
-    orderBy: {
-      createdAt: 'desc'
-    }
-  });
-  accessTokens = JSON.parse(JSON.stringify(accessTokens));
-  return { props: { accessTokens } };
-}
-
-export default function IndexAccessTokensPage({ initAccessTokens }: { initAccessTokens: AccessTokenWithCreatedBy[] }) {
+export default function IndexAccessTokensPage() {
   const { data: session, status } = useSession();
   const loading = status === 'loading';
-  const [accessTokens, setAccessTokens] = useState(initAccessTokens);
+  const [accessTokens, setAccessTokens] = useState<AccessTokenWithCreatedBy[]>([]);
   const { addToast } = useToasts();
 
-  // Fetch access tokens from protected route
   useEffect(() => {
     const fetchData = async () => {
       const res = await fetch('/api/accessTokens');

@@ -1,0 +1,32 @@
+.loader {
+  margin: 20px auto;
+  color: rgb(157 157 157);
+  width: 40px;
+  height: 20px;
+  --d: radial-gradient(farthest-side, currentColor 90%, #0000);
+  background: var(--d), var(--d), var(--d), var(--d);
+  background-size: 10px 10px;
+  background-repeat: no-repeat;
+  animation: m 1s infinite;
+}
+
+@keyframes m {
+  0% {
+    background-position: calc(0 * 100% / 2) 50%, calc(1 * 100% / 2) 50%, calc(2 * 100% / 2) 50%;
+  }
+  20% {
+    background-position: calc(0 * 100% / 2) 0, calc(1 * 100% / 2) 50%, calc(2 * 100% / 2) 50%;
+  }
+  40% {
+    background-position: calc(0 * 100% / 2) 100%, calc(1 * 100% / 2) 0, calc(2 * 100% / 2) 50%;
+  }
+  60% {
+    background-position: calc(0 * 100% / 2) 50%, calc(1 * 100% / 2) 100%, calc(2 * 100% / 2) 0;
+  }
+  80% {
+    background-position: calc(0 * 100% / 2) 50%, calc(1 * 100% / 2) 50%, calc(2 * 100% / 2) 100%;
+  }
+  100% {
+    background-position: calc(0 * 100% / 2) 50%, calc(1 * 100% / 2) 50%, calc(2 * 100% / 2) 50%;
+  }
+}

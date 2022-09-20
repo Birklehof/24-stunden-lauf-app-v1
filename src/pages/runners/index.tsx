@@ -6,7 +6,7 @@ import { prisma } from '../../../prisma';
 import { Runner, Lap } from '@prisma/client';
 import { IoTrashOutline } from 'react-icons/io5';
 import { useToasts } from 'react-toast-notifications';
-import isAuthenticated from '../../lib/middleware';
+import isAuthenticated from '../../lib/middleware/sessionBased';
 
 interface RunnerWithGroupAndLapsCount extends Runner {
   _count: {
@@ -14,30 +14,12 @@ interface RunnerWithGroupAndLapsCount extends Runner {
   };
 }
 
-export async function getServerSideProps(_context: any) {
-  let runners = await prisma.runner.findMany({
-    include: {
-      _count: {
-        select: {
-          laps: true
-        }
-      }
-    },
-    orderBy: {
-      number: 'asc'
-    }
-  });
-  runners = JSON.parse(JSON.stringify(runners));
-  return { props: { runners } };
-}
-
-export default function IndexRunnerPage({ initRunners }: { initRunners: RunnerWithGroupAndLapsCount[] }) {
+export default function IndexRunnerPage() {
   const { data: session, status } = useSession();
   const loading = status === 'loading';
-  const [runners, setRunners] = useState(initRunners);
+  const [runners, setRunners] = useState<RunnerWithGroupAndLapsCount[]>([]);
   const { addToast } = useToasts();
 
-  // Fetch users from protected route
   useEffect(() => {
     const fetchData = async () => {
       const res = await fetch('/api/runners');

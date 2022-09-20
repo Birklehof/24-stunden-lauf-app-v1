@@ -5,7 +5,7 @@ import { getToken } from 'next-auth/jwt';
 
 const secret = process.env.NEXTAUTH_SECRET;
 
-// GET /api/users
+// GET /api/groups
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
   if (!(await isAuthenticated(await getToken({ req, secret }), ['superadmin']))) {
     return res.status(403).end();
@@ -13,11 +13,20 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 
   if (req.method === 'GET') {
     try {
-      const users = await prisma.user.findMany();
+      let newestLaps = await prisma.lap.findMany({
+        include: {
+          runner: true
+        },
+        orderBy: {
+          runAt: 'desc'
+        },
+        take: 10
+      });
       return res.status(200).json({
-        data: users
+        data: newestLaps
       });
     } catch (e) {
+      console.log(e);
       return res.status(500).end();
     }
   } else {

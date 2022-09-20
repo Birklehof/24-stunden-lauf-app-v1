@@ -5,9 +5,10 @@ import { Provider } from 'next-auth/providers';
 import { useState } from 'react';
 
 // Overwrites the default signing-page by next-auth
-export default function SignIn({ providers }: { providers: Provider[] }) {
+export default function SignInPage({ providers }: { providers: Provider[] }) {
   const { data: session } = useSession();
   const [accessToken, setAccessToken] = useState('');
+
   if (session) {
     document.location.href = '/';
   }

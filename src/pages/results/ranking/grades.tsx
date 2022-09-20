@@ -3,7 +3,7 @@ import { useSession } from 'next-auth/react';
 import Layout from '../../../components/layout';
 import { prisma } from '../../../../prisma';
 import { Runner } from '@prisma/client';
-import style from '../../../styles/results-scoreboard.module.css';
+import rankingStyle from '../../../styles/ranking.module.css';
 
 const gradeNames = process.env.GRADES?.split(',') || [''];
 const timezoneHoursOffset = parseInt(process.env.TIMEZONE_HOURS_OFFSET || '0');
@@ -56,7 +56,6 @@ export default function GroupsPage({
     };
   });
 
-  // sort grades by laps count, if equal sort by number of runners
   grades.sort((a, b) => {
     if (a._count.laps > b._count.laps) {
       return -1;
@@ -78,7 +77,7 @@ export default function GroupsPage({
 
   return (
     <Layout>
-      <div className={style.leaderboard}>
+      <div className={rankingStyle.leaderboard}>
         <div className="w-11/12 max-w-4xl flex flex-col gap-4">
           {grades &&
             grades.map((grade, index: number) => (

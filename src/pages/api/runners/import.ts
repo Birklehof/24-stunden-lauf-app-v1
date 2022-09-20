@@ -2,7 +2,7 @@ import formidable from 'formidable';
 import fs from 'fs';
 import { prisma } from '../../../../prisma';
 import { NextApiRequest, NextApiResponse } from 'next';
-import middleware from '../middleware';
+import middleware from '../../../lib/middleware/tokenBased';
 import { getToken } from 'next-auth/jwt';
 
 const sanitize = require('sanitize-filename');

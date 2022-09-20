@@ -5,7 +5,7 @@ import AccessDenied from '../../components/accessDenied';
 import { useSession } from 'next-auth/react';
 import { useToasts } from 'react-toast-notifications';
 import Link from 'next/link';
-import isAuthenticated from '../../lib/middleware';
+import isAuthenticated from '../../lib/middleware/sessionBased';
 
 export default function UpdateUserPage() {
   const { data: session, status } = useSession();

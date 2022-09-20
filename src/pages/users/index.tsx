@@ -7,20 +7,14 @@ import { User } from '@prisma/client';
 import { IoCreateOutline, IoTrashOutline } from 'react-icons/io5';
 import { useToasts } from 'react-toast-notifications';
 import Link from 'next/link';
-import isAuthenticated from '../../lib/middleware';
+import isAuthenticated from '../../lib/middleware/sessionBased';
 
-export async function getServerSideProps(_context: any) {
-  const users = await prisma.user.findMany();
-  return { props: { users } };
-}
-
-export default function IndexUserPage({ initUsers }: { initUsers: User[] }) {
+export default function IndexUserPage() {
   const { data: session, status } = useSession();
   const loading = status === 'loading';
-  const [users, setUsers] = useState(initUsers);
+  const [users, setUsers] = useState<User[]>([]);
   const { addToast } = useToasts();
 
-  // Fetch users from protected route
   useEffect(() => {
     const fetchData = async () => {
       const res = await fetch('/api/users');

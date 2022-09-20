@@ -3,7 +3,7 @@ import { useSession } from 'next-auth/react';
 import Layout from '../../../components/layout';
 import { prisma } from '../../../../prisma';
 import { Runner } from '@prisma/client';
-import style from '../../../styles/results-scoreboard.module.css';
+import rankingStyle from '../../../styles/ranking.module.css';
 
 interface RunnerWithLapCount extends Runner {
   _count: {
@@ -77,7 +77,7 @@ export default function LeaderbordPage({
 
   return (
     <Layout>
-      <div className={style.leaderboard}>
+      <div className={rankingStyle.leaderboard}>
         <div className="w-11/12 max-w-4xl flex flex-col justify-between items-center my-6 gap-2">
           {runners &&
             [runners[0], runners[1], runners[2]].map((runner: RunnerWithLapCount, index: number) => (
