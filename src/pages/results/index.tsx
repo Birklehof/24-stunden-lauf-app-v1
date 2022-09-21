@@ -31,7 +31,7 @@ interface RunnerWitLapsAndLapCount extends Runner {
   };
 }
 
-export async function getStaticProps(_context: any) {
+export async function getServerSideProps(_context: any) {
   let runners = await prisma.runner.findMany({
     include: {
       laps: true,
@@ -62,7 +62,7 @@ export async function getStaticProps(_context: any) {
   let currentDate = new Date();
   currentDate.setHours(currentDate.getHours() + timezoneHoursOffset);
   const formattedCurrentDate = currentDate.toLocaleDateString('de') + ' ' + currentDate.toLocaleTimeString('de');
-  return { props: { runners, laps, formattedCurrentDate }, revalidate: 60 };
+  return { props: { runners, laps, formattedCurrentDate } };
 }
 
 export default function GeneralPage({

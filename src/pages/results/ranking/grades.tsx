@@ -13,7 +13,7 @@ interface RunnerWithLapCount extends Runner {
   };
 }
 
-export async function getStaticProps(_context: any) {
+export async function getServerSideProps(_context: any) {
   let runners = await prisma.runner.findMany({
     include: {
       _count: {
@@ -27,7 +27,7 @@ export async function getStaticProps(_context: any) {
   let currentDate = new Date();
   currentDate.setHours(currentDate.getHours() + timezoneHoursOffset);
   const formattedCurrentDate = currentDate.toLocaleDateString('de') + ' ' + currentDate.toLocaleTimeString('de');
-  return { props: { runners, formattedCurrentDate }, revalidate: 60 };
+  return { props: { runners, formattedCurrentDate } };
 }
 
 export default function GroupsPage({

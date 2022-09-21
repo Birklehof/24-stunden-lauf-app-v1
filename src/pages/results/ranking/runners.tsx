@@ -12,7 +12,7 @@ interface RunnerWithLapCount extends Runner {
 
 const timezoneHoursOffset = parseInt(process.env.TIMEZONE_HOURS_OFFSET || '0');
 
-export async function getStaticProps(_context: any) {
+export async function getServerSideProps(_context: any) {
   let runners = await prisma.runner.findMany({
     include: {
       _count: {
@@ -39,7 +39,7 @@ export async function getStaticProps(_context: any) {
   let currentDate = new Date();
   currentDate.setHours(currentDate.getHours() + timezoneHoursOffset);
   const formattedCurrentDate = currentDate.toLocaleDateString('de') + ' ' + currentDate.toLocaleTimeString('de');
-  return { props: { runners, formattedCurrentDate }, revalidate: 60 };
+  return { props: { runners, formattedCurrentDate } };
 }
 
 export default function LeaderbordPage({
