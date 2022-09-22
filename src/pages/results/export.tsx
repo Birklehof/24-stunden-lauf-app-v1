@@ -66,7 +66,7 @@ export default function ExportRunnersPage({ runners }: { runners: RunnerWithDist
   const csvReport: csvReport = {
     data: data,
     headers: headers,
-    filename: 'Birklehof_24h-Lauf_Ergebnisse_' + formattedDate + '.csv'
+    filename: 'Birklehof_24-Stunden-Lauf_Ergebnisse_' + formattedDate + '.csv'
   };
 
   // When rendering client side don't display anything until loading is complete

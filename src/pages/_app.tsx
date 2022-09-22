@@ -13,7 +13,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>24h-Lauf</title>
+        <title>24-Stunden-Lauf</title>
       </Head>
       <SessionProvider session={pageProps.session} refetchInterval={0}>
         {/*

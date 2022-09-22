@@ -1,3 +1,3 @@
-# Birklehof 24-Lauf
+# Birklehof 24-Stunden-Lauf
 
-A small application for the 24h-Lauf (race) at the school Birklehof.
+A small application for the 24-Stunden-Lauf (24 hour race) at the school Birklehof.
