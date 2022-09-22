@@ -1,16 +1,15 @@
 {
-  "name": "birklehof-24-stunden-lauf",
-  "version": "0.0.1",
+  "name": "24-stunden-lauf",
+  "version": "1.0.0",
   "private": true,
   "description": "A small application for the 24-Stunden-Lauf (24 hour race) at the school Birklehof.",
-  "repository": "https://github.com/C0mput3r5c13nt15t/birklehof-24h-lauf.git",
+  "repository": "https://github.com/Birklehof/24-stunden-lauf",
   "main": "",
   "scripts": {
     "dev": "next",
     "build": "next build",
     "start": "next start",
     "types": "tsc --noEmit",
-    "prettier-format": "prettier --config .prettierrc.json 'src/**' 'prisma/scripts/**' './*.ts' --write",
     "migrate:dev": "yarn dotenv -e .env.local yarn prisma migrate dev",
     "migrate:reset": "yarn dotenv -e .env.local yarn prisma migrate reset",
     "migrate:deploy": "yarn dotenv -e .env.local yarn prisma migrate deploy"
