@@ -97,18 +97,13 @@ export default function IndexAccessTokensPage() {
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== 'undefined' && loading) return null;
 
-  if (
-    async () => {
-      (await isAuthenticated(session, ['superadmin'])) !== true;
-    }
-  ) {
+  if (!isAuthenticated(session, ['superadmin'])) {
     return (
       <Layout>
         <AccessDenied />
       </Layout>
     );
   }
-
   return (
     <Layout>
       <div className="card w-11/12 max-w-4xl h-full bg-base-100 shadow-xl">

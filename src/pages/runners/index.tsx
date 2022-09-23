@@ -71,11 +71,7 @@ export default function IndexRunnerPage() {
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== 'undefined' && loading) return null;
 
-  if (
-    async () => {
-      (await isAuthenticated(session, ['helper', 'superadmin'])) !== true;
-    }
-  ) {
+  if (!isAuthenticated(session, ['helper', 'superadmin'])) {
     return (
       <Layout>
         <AccessDenied />

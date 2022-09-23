@@ -66,11 +66,7 @@ export default function IndexUserPage() {
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== 'undefined' && loading) return null;
 
-  if (
-    async () => {
-      (await isAuthenticated(session, ['superadmin'])) !== true;
-    }
-  ) {
+  if (!isAuthenticated(session, ['superadmin'])) {
     return (
       <Layout>
         <AccessDenied />
