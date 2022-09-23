@@ -94,7 +94,7 @@ export default function IndexRunnerPage() {
             <table className="table table-compact w-full">
               <thead>
                 <tr>
-                  <th>Startnummer</th>
+                  <th>Nr.</th>
                   <th>Vorname</th>
                   <th>Nachname</th>
                   <th>Klasse</th>

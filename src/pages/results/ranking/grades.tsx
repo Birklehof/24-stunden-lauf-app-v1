@@ -95,7 +95,7 @@ export default function GroupsPage({
                         <table className="table table-compact w-full">
                           <thead>
                             <tr>
-                              <th> Nr.</th>
+                              <th>Nr.</th>
                               <th>Name</th>
                               <th>Runden</th>
                             </tr>
