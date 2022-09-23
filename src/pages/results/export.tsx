@@ -5,6 +5,7 @@ import AccessDenied from '../../components/accessDenied';
 import { CSVLink } from 'react-csv';
 import { Runner } from '@prisma/client';
 import { prisma } from '../../../prisma';
+import isAuthenticated from '../../lib/middleware/sessionBased';
 
 interface Header {
   label: string;
@@ -72,8 +73,11 @@ export default function ExportRunnersPage({ runners }: { runners: RunnerWithDist
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== 'undefined' && loading) return null;
 
-  // If the user is not authenticated or does not have the correct role, display access denied message
-  if (!session || session.userRole !== 'superadmin') {
+  if (
+    async () => {
+      (await isAuthenticated(session, ['superadmin'])) !== true;
+    }
+  ) {
     return (
       <Layout>
         <AccessDenied />

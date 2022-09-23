@@ -5,6 +5,7 @@ import AccessDenied from '../../components/accessDenied';
 import { AccessToken } from '@prisma/client';
 import { IoTrashOutline } from 'react-icons/io5';
 import { useToasts } from 'react-toast-notifications';
+import isAuthenticated from '../../lib/middleware/sessionBased';
 
 interface AccessTokenWithCreatedBy extends AccessToken {
   createdBy: {
@@ -96,8 +97,11 @@ export default function IndexAccessTokensPage() {
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== 'undefined' && loading) return null;
 
-  // If the user is not authenticated or does not have the correct role, display access denied message
-  if (!session || session.userRole !== 'superadmin') {
+  if (
+    async () => {
+      (await isAuthenticated(session, ['superadmin'])) !== true;
+    }
+  ) {
     return (
       <Layout>
         <AccessDenied />
