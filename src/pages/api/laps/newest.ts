@@ -7,7 +7,7 @@ const secret = process.env.NEXTAUTH_SECRET;
 
 // GET /api/groups
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-  if (!(await isAuthenticated(await getToken({ req, secret }), ['superadmin']))) {
+  if (!(await isAuthenticated(await getToken({ req, secret }), ['helper', 'superadmin']))) {
     return res.status(403).end();
   }
 

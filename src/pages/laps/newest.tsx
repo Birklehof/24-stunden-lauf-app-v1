@@ -1,6 +1,4 @@
 import { Lap } from '@prisma/client';
-import Head from 'next/head';
-import { prisma } from '../../../prisma';
 import useSWR from 'swr';
 import loaderSytle from '../../styles/loader.module.css';
 
